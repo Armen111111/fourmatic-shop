@@ -111,6 +111,86 @@ async function loadInitial() {
   renderProducts();
   updateCartBadge();
   updateFavoritesBadge();
+  initHeroSlider();
+  initScrollReveal();
+}
+
+/* ---------- hero-слайдер ---------- */
+
+function initHeroSlider() {
+  const track = document.getElementById("slider-track");
+  const dotsEl = document.getElementById("slider-dots");
+  if (!track) return;
+  const slides = track.querySelectorAll(".hero-slide");
+  let index = 0;
+  let timer = null;
+
+  dotsEl.innerHTML = Array.from(slides)
+    .map((_, i) => `<span class="slider-dot${i === 0 ? " active" : ""}" data-index="${i}"></span>`)
+    .join("");
+  const dots = dotsEl.querySelectorAll(".slider-dot");
+
+  function goTo(i) {
+    index = (i + slides.length) % slides.length;
+    track.style.transform = `translateX(-${index * 100}%)`;
+    dots.forEach((d, di) => d.classList.toggle("active", di === index));
+  }
+
+  function next() {
+    goTo(index + 1);
+  }
+
+  function restartTimer() {
+    clearInterval(timer);
+    timer = setInterval(next, 4200);
+  }
+
+  dots.forEach((dot) => {
+    dot.addEventListener("click", () => {
+      goTo(Number(dot.dataset.index));
+      restartTimer();
+    });
+  });
+
+  let startX = 0;
+  let deltaX = 0;
+  track.addEventListener("touchstart", (e) => {
+    startX = e.touches[0].clientX;
+    deltaX = 0;
+  }, { passive: true });
+  track.addEventListener("touchmove", (e) => {
+    deltaX = e.touches[0].clientX - startX;
+  }, { passive: true });
+  track.addEventListener("touchend", () => {
+    if (deltaX > 40) goTo(index - 1);
+    else if (deltaX < -40) goTo(index + 1);
+    restartTimer();
+  });
+
+  goTo(0);
+  restartTimer();
+}
+
+/* ---------- анимации появления при скролле ---------- */
+
+function initScrollReveal() {
+  const targets = document.querySelectorAll(".fade-in");
+  if (!("IntersectionObserver" in window)) {
+    targets.forEach((el) => el.classList.add("in-view"));
+    return;
+  }
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("in-view");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.15 }
+  );
+  targets.forEach((el) => observer.observe(el));
 }
 
 function renderSkeleton() {
@@ -255,13 +335,13 @@ function filteredProducts() {
   });
 }
 
-function productCardHtml(product) {
+function productCardHtml(product, index) {
   const isFav = state.favorites.includes(product.id);
   const stockClass = product.in_stock ? "in" : "out";
   const stockLabel = product.in_stock ? "В наличии" : "Под заказ";
   const badge = product.is_hit ? "🏆 Хит" : product.is_new ? "🆕 Новинка" : "";
   return `
-    <article class="product-card" data-id="${escapeAttr(product.id)}">
+    <article class="product-card" data-id="${escapeAttr(product.id)}" style="--card-index:${index % 12}">
       ${badge ? `<span class="product-badge">${badge}</span>` : ""}
       <button class="favorite-toggle${isFav ? " active" : ""}" data-fav="${escapeAttr(product.id)}" type="button">${isFav ? "♥" : "♡"}</button>
       <img src="${escapeAttr(product.image)}" alt="${escapeAttr(product.name)}" loading="lazy" />
@@ -285,7 +365,7 @@ function renderProducts() {
     if (!items.length) {
       productGridEl.innerHTML = `<div class="cart-empty">Ничего не найдено. Попробуйте другой запрос.</div>`;
     } else {
-      productGridEl.innerHTML = items.map(productCardHtml).join("");
+      productGridEl.innerHTML = items.map((p, i) => productCardHtml(p, i)).join("");
     }
     productGridEl.classList.remove("grid-leaving");
 
