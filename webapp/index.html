@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Запчасти Mercedes-Benz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=1" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="brand">
+      <h1>MB PARTS</h1>
+      <span class="brand-tagline">Запчасти Mercedes-Benz</span>
+    </div>
+    <button id="cart-btn" class="cart-btn" type="button">
+      <span class="cart-btn-icon">🛒</span>
+      <span id="cart-count" class="cart-count">0</span>
+    </button>
+  </header>
+
+  <section class="hero">
+    <h2 class="hero-title">Оригинальные и аналоговые запчасти</h2>
+    <p class="hero-subtitle">Подбор по каталогу для всех моделей Mercedes-Benz.</p>
+  </section>
+
+  <div class="shop-layout">
+    <nav class="category-rail" id="category-rail" aria-label="Категории"></nav>
+
+    <div class="shop-main">
+      <nav class="quick-filters" id="filters">
+        <button class="filter-chip active" data-tab="all">Все</button>
+        <button class="filter-chip" data-tab="hit">🏆 Хиты</button>
+        <button class="filter-chip" data-tab="new">🆕 Новинки</button>
+      </nav>
+      <div class="search-row">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="search-input" class="search-input" placeholder="Название, артикул, модель авто" />
+      </div>
+      <main id="product-grid" class="product-grid"></main>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-title">Помогаем найти нужную деталь 🔧</div>
+    <p class="footer-text">Если не нашли деталь в каталоге — напишите нам в этом чате, поможем подобрать.</p>
+  </footer>
+
+  <div id="cart-overlay" class="overlay hidden">
+    <div class="sheet">
+      <div class="sheet-header">
+        <h2>Корзина</h2>
+        <button id="close-cart" class="icon-btn" type="button">✕</button>
+      </div>
+      <div id="cart-items" class="cart-items"></div>
+      <div class="cart-footer">
+        <div class="cart-total">Итого: <span id="cart-total">0 ₽</span></div>
+        <button id="checkout-btn" class="checkout-btn" type="button">Оформить заказ</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="contact-overlay" class="overlay hidden">
+    <div class="sheet">
+      <div class="sheet-header">
+        <h2>Оформление заказа</h2>
+        <button id="close-contact" class="icon-btn" type="button">✕</button>
+      </div>
+      <form id="contact-form" class="contact-form">
+        <label>Имя
+          <input type="text" name="name" required maxlength="80" placeholder="Как к вам обращаться" />
+        </label>
+        <label>Телефон
+          <input type="tel" name="phone" required maxlength="30" placeholder="+7 900 000-00-00" />
+        </label>
+        <label>Модель автомобиля
+          <input type="text" name="car_model" maxlength="80" placeholder="Например, W212 E200, 2013" />
+        </label>
+        <label>Адрес доставки
+          <input type="text" name="address" maxlength="200" placeholder="Город, улица, дом, квартира" />
+        </label>
+        <fieldset class="payment-choice">
+          <legend>Способ доставки</legend>
+          <label class="radio-row">
+            <input type="radio" name="delivery_method" value="russian_post" checked />
+            Почта России (до отделения)
+          </label>
+          <label class="radio-row">
+            <input type="radio" name="delivery_method" value="cdek" />
+            СДЭК до ПВЗ
+          </label>
+          <label class="radio-row">
+            <input type="radio" name="delivery_method" value="yandex" />
+            Яндекс Доставка
+          </label>
+          <label class="radio-row">
+            <input type="radio" name="delivery_method" value="pickup" />
+            Самовывоз
+          </label>
+        </fieldset>
+        <fieldset class="payment-choice">
+          <legend>Способ оплаты</legend>
+          <label class="radio-row">
+            <input type="radio" name="payment_method" value="transfer" checked />
+            Перевод на карту
+          </label>
+          <label class="radio-row">
+            <input type="radio" name="payment_method" value="cash" />
+            Наличными при получении
+          </label>
+        </fieldset>
+        <p class="contact-hint">
+          После отправки с вами свяжутся в этом чате, чтобы подтвердить заказ и способ оплаты.
+        </p>
+        <button id="submit-order-btn" class="checkout-btn" type="submit">Отправить заказ</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="product-overlay" class="overlay hidden">
+    <div class="sheet product-sheet">
+      <div class="sheet-header">
+        <h2>О товаре</h2>
+        <button id="close-product" class="icon-btn" type="button">✕</button>
+      </div>
+      <div id="product-detail-body" class="product-detail-body"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="app.js?v=1"></script>
+</body>
+</html>
