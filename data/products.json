@@ -1,1 +1,146 @@
-[]
+[
+  {
+    "id": "demo-oil-filter-mann",
+    "name": "Масляный фильтр",
+    "brand": "Mann-Filter",
+    "category": "Фильтры",
+    "oem": "A2701800009",
+    "compatible_models": [
+      "W205 C-Class",
+      "W213 E-Class",
+      "W222 S-Class"
+    ],
+    "price": 1290,
+    "description": "Оригинальный масляный фильтр для бензиновых двигателей M264/M256. Обеспечивает эффективную очистку моторного масла от загрязнений.",
+    "image": "https://placehold.co/500x500/1b1f26/9fb4cc?text=Масляный+фильтр",
+    "in_stock": true,
+    "is_hit": true,
+    "is_new": false,
+    "delivery_days": "1-2"
+  },
+  {
+    "id": "demo-brake-pads-ate",
+    "name": "Тормозные колодки передние",
+    "brand": "ATE",
+    "category": "Тормозная система",
+    "oem": "A0004202702",
+    "compatible_models": [
+      "W213 E-Class",
+      "W205 C-Class"
+    ],
+    "price": 5490,
+    "description": "Комплект передних тормозных колодок. Низкий уровень пыли, тихая работа, стабильная эффективность торможения.",
+    "image": "https://placehold.co/500x500/1b1f26/9fb4cc?text=Тормозные+колодки+передние",
+    "in_stock": true,
+    "is_hit": true,
+    "is_new": false,
+    "delivery_days": "2-4"
+  },
+  {
+    "id": "demo-shock-bilstein",
+    "name": "Амортизатор задний",
+    "brand": "Bilstein",
+    "category": "Подвеска",
+    "oem": "A2223202500",
+    "compatible_models": [
+      "W222 S-Class"
+    ],
+    "price": 14900,
+    "description": "Газомасляный амортизатор B4 для задней оси. Оригинальная замена, полная совместимость с заводской подвеской.",
+    "image": "https://placehold.co/500x500/1b1f26/9fb4cc?text=Амортизатор+задний",
+    "in_stock": true,
+    "is_hit": false,
+    "is_new": true,
+    "delivery_days": "3-5"
+  },
+  {
+    "id": "demo-spark-plug-ngk",
+    "name": "Свеча зажигания",
+    "brand": "NGK",
+    "category": "Двигатель",
+    "oem": "A0041598303",
+    "compatible_models": [
+      "W205 C-Class",
+      "W213 E-Class",
+      "W177 A-Class"
+    ],
+    "price": 890,
+    "description": "Иридиевая свеча зажигания для турбированных бензиновых двигателей. Увеличенный ресурс, стабильное искрообразование.",
+    "image": "https://placehold.co/500x500/1b1f26/9fb4cc?text=Свеча+зажигания",
+    "in_stock": true,
+    "is_hit": true,
+    "is_new": false,
+    "delivery_days": "1-2"
+  },
+  {
+    "id": "demo-headlight-hella",
+    "name": "Фара передняя левая LED",
+    "brand": "Hella",
+    "category": "Оптика",
+    "oem": "A2059060403",
+    "compatible_models": [
+      "W205 C-Class"
+    ],
+    "price": 42900,
+    "description": "Светодиодная фара в сборе, левая сторона. Полностью адаптивная система освещения, оригинальная разводка разъёмов.",
+    "image": "https://placehold.co/500x500/1b1f26/9fb4cc?text=Фара+передняя+левая+LED",
+    "in_stock": false,
+    "is_hit": false,
+    "is_new": true,
+    "delivery_days": "7-10"
+  },
+  {
+    "id": "demo-radiator-behr",
+    "name": "Радиатор охлаждения",
+    "brand": "Behr",
+    "category": "Охлаждение",
+    "oem": "A2465000300",
+    "compatible_models": [
+      "W213 E-Class"
+    ],
+    "price": 18700,
+    "description": "Радиатор системы охлаждения двигателя. Алюминиевые соты, оригинальные крепления, тестирован на герметичность.",
+    "image": "https://placehold.co/500x500/1b1f26/9fb4cc?text=Радиатор+охлаждения",
+    "in_stock": true,
+    "is_hit": false,
+    "is_new": false,
+    "delivery_days": "3-5"
+  },
+  {
+    "id": "demo-steering-trw",
+    "name": "Рулевая тяга",
+    "brand": "TRW",
+    "category": "Рулевое управление",
+    "oem": "A2123304803",
+    "compatible_models": [
+      "W222 S-Class",
+      "W213 E-Class"
+    ],
+    "price": 6200,
+    "description": "Рулевая тяга в сборе с наконечником. Обеспечивает точность и стабильность управления.",
+    "image": "https://placehold.co/500x500/1b1f26/9fb4cc?text=Рулевая+тяга",
+    "in_stock": true,
+    "is_hit": false,
+    "is_new": false,
+    "delivery_days": "2-4"
+  },
+  {
+    "id": "demo-battery-bosch",
+    "name": "Аккумулятор AGM",
+    "brand": "Bosch",
+    "category": "Электрика",
+    "oem": "A0009822208",
+    "compatible_models": [
+      "W205 C-Class",
+      "W213 E-Class",
+      "W222 S-Class"
+    ],
+    "price": 24500,
+    "description": "AGM-аккумулятор для автомобилей с системой старт-стоп. Повышенный ресурс циклов заряда/разряда.",
+    "image": "https://placehold.co/500x500/1b1f26/9fb4cc?text=Аккумулятор+AGM",
+    "in_stock": true,
+    "is_hit": true,
+    "is_new": false,
+    "delivery_days": "1-3"
+  }
+]

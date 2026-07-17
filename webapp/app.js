@@ -1,359 +1,550 @@
 const tg = window.Telegram?.WebApp;
-
-if (tg) {
-  tg.ready();
-  tg.expand();
-}
+tg?.ready();
+tg?.expand();
 
 const state = {
   products: [],
-  tab: "all", // all | hit | new
-  category: "all",
-  cart: {}, // { productId: qty }
-  paymentsEnabled: false,
+  tab: "all",
+  category: null,
+  brand: null,
   search: "",
+  cart: {},
+  favorites: [],
+  garage: [],
+  paymentsEnabled: false,
 };
 
-const grid = document.getElementById("product-grid");
-const searchInput = document.getElementById("search-input");
-const categoryRailEl = document.getElementById("category-rail");
-const cartBtn = document.getElementById("cart-btn");
-const cartCount = document.getElementById("cart-count");
-const cartOverlay = document.getElementById("cart-overlay");
-const cartItemsEl = document.getElementById("cart-items");
-const cartTotalEl = document.getElementById("cart-total");
-const closeCartBtn = document.getElementById("close-cart");
-const checkoutBtn = document.getElementById("checkout-btn");
+const CATEGORY_ICONS = {
+  "Фильтры": "🧰",
+  "Тормозная система": "🛑",
+  "Подвеска": "🔧",
+  "Двигатель": "⚙️",
+  "Оптика": "💡",
+  "Охлаждение": "❄️",
+  "Рулевое управление": "🎛",
+  "Электрика": "🔋",
+};
+
+const productGridEl = document.getElementById("product-grid");
+const categoryGridEl = document.getElementById("category-grid");
+const brandGridEl = document.getElementById("brand-grid");
 const filtersEl = document.getElementById("filters");
-const toastEl = document.getElementById("toast");
+const activeFilterRowEl = document.getElementById("active-filter-row");
+const activeFilterLabelEl = document.getElementById("active-filter-label");
+const clearFilterBtn = document.getElementById("clear-filter-btn");
+const vinInputEl = document.getElementById("vin-input");
+const vinSearchBtn = document.getElementById("vin-search-btn");
+
+const cartBtn = document.getElementById("cart-btn");
+const cartOverlay = document.getElementById("cart-overlay");
+const closeCartBtn = document.getElementById("close-cart");
+const cartItemsEl = document.getElementById("cart-items");
+const cartCountEl = document.getElementById("cart-count");
+const cartTotalEl = document.getElementById("cart-total");
+const checkoutBtn = document.getElementById("checkout-btn");
+
+const favoritesBtn = document.getElementById("favorites-btn");
+const favoritesOverlay = document.getElementById("favorites-overlay");
+const closeFavoritesBtn = document.getElementById("close-favorites");
+const favoritesItemsEl = document.getElementById("favorites-items");
+const favoritesCountEl = document.getElementById("favorites-count");
+
+const garageManageBtn = document.getElementById("garage-manage-btn");
+const garageOverlay = document.getElementById("garage-overlay");
+const closeGarageBtn = document.getElementById("close-garage");
+const garageCarsEl = document.getElementById("garage-cars");
+const garageListEl = document.getElementById("garage-list");
+const garageForm = document.getElementById("garage-form");
+const garageModelInput = document.getElementById("garage-model-input");
+
 const contactOverlay = document.getElementById("contact-overlay");
 const closeContactBtn = document.getElementById("close-contact");
 const contactForm = document.getElementById("contact-form");
+
 const productOverlay = document.getElementById("product-overlay");
-const productDetailBody = document.getElementById("product-detail-body");
 const closeProductBtn = document.getElementById("close-product");
+const productDetailBodyEl = document.getElementById("product-detail-body");
+
+const toastEl = document.getElementById("toast");
+
+function loadJSON(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveJSON(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+state.favorites = loadJSON("fourmatic_favorites", []);
+state.garage = loadJSON("fourmatic_garage", []);
+
+let toastTimer = null;
+function showToast(message) {
+  toastEl.textContent = message;
+  toastEl.classList.remove("hidden");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.add("hidden"), 2600);
+}
 
 function formatPrice(value) {
   return `${value.toLocaleString("ru-RU")} ₽`;
 }
 
-function showToast(message) {
-  toastEl.textContent = message;
-  toastEl.classList.remove("hidden");
-  setTimeout(() => toastEl.classList.add("hidden"), 2500);
+async function loadInitial() {
+  renderSkeleton();
+  const [configRes, productsRes] = await Promise.all([
+    fetch("/api/config"),
+    fetch("/api/products"),
+  ]);
+  const config = await configRes.json();
+  state.paymentsEnabled = Boolean(config.payments_enabled);
+  state.products = await productsRes.json();
+
+  renderCategoryGrid();
+  renderBrandGrid();
+  renderGarage();
+  renderProducts();
+  updateCartBadge();
+  updateFavoritesBadge();
 }
 
-function getProduct(id) {
-  return state.products.find((p) => p.id === id);
+function renderSkeleton() {
+  productGridEl.innerHTML = Array.from({ length: 6 })
+    .map(
+      () => `
+      <div class="skeleton-card">
+        <div class="skeleton-block"></div>
+        <div class="skeleton-lines">
+          <div class="skeleton-block" style="width:60%"></div>
+          <div class="skeleton-block" style="width:85%"></div>
+          <div class="skeleton-block" style="width:40%"></div>
+        </div>
+      </div>`
+    )
+    .join("");
 }
 
-function cartQty(productId) {
-  return state.cart[productId] || 0;
+function categoryCounts() {
+  const counts = {};
+  state.products.forEach((p) => {
+    counts[p.category] = (counts[p.category] || 0) + 1;
+  });
+  return counts;
 }
 
-function cartEntries() {
-  return Object.entries(state.cart)
-    .filter(([, qty]) => qty > 0)
-    .map(([productId, qty]) => ({ productId, qty, product: getProduct(productId) }))
-    .filter((entry) => entry.product);
+function brandCounts() {
+  const counts = {};
+  state.products.forEach((p) => {
+    counts[p.brand] = (counts[p.brand] || 0) + 1;
+  });
+  return counts;
 }
 
-function cartTotal() {
-  return cartEntries().reduce((sum, entry) => sum + entry.product.price * entry.qty, 0);
+function renderCategoryGrid() {
+  const counts = categoryCounts();
+  const categories = Object.keys(counts).sort();
+  categoryGridEl.innerHTML = categories
+    .map(
+      (cat) => `
+      <button class="category-card${state.category === cat ? " active" : ""}" data-category="${escapeAttr(cat)}" type="button">
+        <span class="category-card-icon">${CATEGORY_ICONS[cat] || "🔩"}</span>
+        <span class="category-card-label">${escapeHtml(cat)}</span>
+      </button>`
+    )
+    .join("");
+
+  categoryGridEl.querySelectorAll(".category-card").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const cat = btn.dataset.category;
+      state.category = state.category === cat ? null : cat;
+      state.brand = null;
+      state.tab = "all";
+      syncFilterChips();
+      renderCategoryGrid();
+      renderBrandGrid();
+      renderProducts();
+    });
+  });
 }
 
-function cartItemsCount() {
-  return cartEntries().reduce((sum, entry) => sum + entry.qty, 0);
+function renderBrandGrid() {
+  const counts = brandCounts();
+  const brands = Object.keys(counts).sort();
+  brandGridEl.innerHTML = brands
+    .map(
+      (brand) => `
+      <button class="brand-card${state.brand === brand ? " active" : ""}" data-brand="${escapeAttr(brand)}" type="button">
+        ${escapeHtml(brand)}
+      </button>`
+    )
+    .join("");
+
+  brandGridEl.querySelectorAll(".brand-card").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const brand = btn.dataset.brand;
+      state.brand = state.brand === brand ? null : brand;
+      state.category = null;
+      state.tab = "all";
+      syncFilterChips();
+      renderCategoryGrid();
+      renderBrandGrid();
+      renderProducts();
+    });
+  });
 }
 
-function setQty(productId, qty) {
-  state.cart[productId] = Math.max(0, qty);
-  renderCartBadge();
-  renderCart();
-  if (!productOverlay.classList.contains("hidden") && productOverlay.dataset.productId === productId) {
-    renderProductDetail(productId);
-  }
-}
-
-function renderCartBadge() {
-  cartCount.textContent = cartItemsCount();
-}
-
-function renderFilters() {
+function syncFilterChips() {
   filtersEl.querySelectorAll(".filter-chip").forEach((chip) => {
     chip.classList.toggle("active", chip.dataset.tab === state.tab);
   });
 }
 
-function matchesSearch(product) {
-  const q = state.search.trim().toLowerCase();
+function updateActiveFilterRow() {
+  const label = state.category || state.brand;
+  if (label) {
+    activeFilterRowEl.classList.remove("hidden");
+    activeFilterLabelEl.textContent = `Фильтр: ${label}`;
+  } else {
+    activeFilterRowEl.classList.add("hidden");
+  }
+}
+
+clearFilterBtn.addEventListener("click", () => {
+  state.category = null;
+  state.brand = null;
+  renderCategoryGrid();
+  renderBrandGrid();
+  renderProducts();
+});
+
+filtersEl.addEventListener("click", (event) => {
+  const chip = event.target.closest(".filter-chip");
+  if (!chip) return;
+  state.tab = chip.dataset.tab;
+  syncFilterChips();
+  renderProducts();
+});
+
+function matchesSearch(product, query) {
+  const q = query.trim().toLowerCase();
   if (!q) return true;
-  const models = (product.compatible_models || []).join(" ").toLowerCase();
-  return (
-    product.name.toLowerCase().includes(q) ||
-    product.brand.toLowerCase().includes(q) ||
-    models.includes(q)
-  );
+  const haystack = [
+    product.name,
+    product.brand,
+    product.oem,
+    ...(product.compatible_models || []),
+  ]
+    .join(" ")
+    .toLowerCase();
+  return haystack.includes(q);
 }
 
-function matchesCategory(product) {
-  return state.category === "all" || product.category === state.category;
-}
-
-function visibleProducts() {
-  let list = state.products;
-  if (state.tab === "hit") list = list.filter((p) => p.is_hit);
-  else if (state.tab === "new") list = list.filter((p) => p.is_new);
-  return list.filter(matchesCategory).filter(matchesSearch);
-}
-
-function categoryCounts() {
-  const counts = new Map();
-  state.products.forEach((p) => counts.set(p.category, (counts.get(p.category) || 0) + 1));
-  return [...counts.entries()].sort((a, b) => a[0].localeCompare(b[0]));
-}
-
-function renderCategoryRail() {
-  const categories = categoryCounts();
-  const allChip = `<button class="category-chip${state.category === "all" ? " active" : ""}" data-category="all">
-      <span>Все категории</span><span class="category-chip-count">${state.products.length}</span>
-    </button>`;
-  const chips = categories
-    .map(
-      ([category, count]) => `
-    <button class="category-chip${state.category === category ? " active" : ""}" data-category="${category}">
-      <span>${category}</span><span class="category-chip-count">${count}</span>
-    </button>`
-    )
-    .join("");
-  categoryRailEl.innerHTML = allChip + chips;
-}
-
-function addControlHtml(product) {
-  const qty = cartQty(product.id);
-  if (!product.in_stock) {
-    return `<button class="add-btn" disabled>Нет в наличии</button>`;
-  }
-  if (qty > 0) {
-    return `<div class="qty-control" data-product="${product.id}">
-         <button class="qty-minus" type="button">−</button>
-         <span>${qty}</span>
-         <button class="qty-plus" type="button">+</button>
-       </div>`;
-  }
-  return `<button class="add-btn" data-product="${product.id}" type="button">Добавить</button>`;
+function filteredProducts() {
+  return state.products.filter((p) => {
+    if (state.tab === "hit" && !p.is_hit) return false;
+    if (state.tab === "new" && !p.is_new) return false;
+    if (state.category && p.category !== state.category) return false;
+    if (state.brand && p.brand !== state.brand) return false;
+    if (!matchesSearch(p, state.search)) return false;
+    return true;
+  });
 }
 
 function productCardHtml(product) {
+  const isFav = state.favorites.includes(product.id);
+  const stockClass = product.in_stock ? "in" : "out";
+  const stockLabel = product.in_stock ? "В наличии" : "Под заказ";
   const badge = product.is_hit ? "🏆 Хит" : product.is_new ? "🆕 Новинка" : "";
   return `
-    <div class="product-card" data-product-id="${product.id}">
+    <article class="product-card" data-id="${escapeAttr(product.id)}">
       ${badge ? `<span class="product-badge">${badge}</span>` : ""}
-      <img src="${product.image}" alt="${product.name}" loading="lazy" />
+      <button class="favorite-toggle${isFav ? " active" : ""}" data-fav="${escapeAttr(product.id)}" type="button">${isFav ? "♥" : "♡"}</button>
+      <img src="${escapeAttr(product.image)}" alt="${escapeAttr(product.name)}" loading="lazy" />
       <div class="product-info">
-        <span class="product-brand">${product.brand}</span>
-        <span class="product-name">${product.name}</span>
-        ${product.description ? `<p class="product-description">${product.description}</p>` : ""}
+        <span class="product-brand">${escapeHtml(product.brand)}</span>
+        <span class="product-oem">OEM ${escapeHtml(product.oem || "—")}</span>
+        <span class="product-name">${escapeHtml(product.name)}</span>
         <div class="product-price-row">
           <span class="product-price">${formatPrice(product.price)}</span>
+          <span class="stock-dot ${stockClass}">${stockLabel}</span>
         </div>
       </div>
-    </div>
-  `;
+    </article>`;
 }
 
-function renderGrid() {
-  const products = visibleProducts();
-  grid.innerHTML = products.length
-    ? products.map(productCardHtml).join("")
-    : '<p class="cart-empty">Ничего не найдено</p>';
+function renderProducts() {
+  updateActiveFilterRow();
+  const items = filteredProducts();
+  productGridEl.classList.add("grid-leaving");
+  setTimeout(() => {
+    if (!items.length) {
+      productGridEl.innerHTML = `<div class="cart-empty">Ничего не найдено. Попробуйте другой запрос.</div>`;
+    } else {
+      productGridEl.innerHTML = items.map(productCardHtml).join("");
+    }
+    productGridEl.classList.remove("grid-leaving");
+
+    productGridEl.querySelectorAll(".product-card").forEach((card) => {
+      card.addEventListener("click", (e) => {
+        if (e.target.closest(".favorite-toggle")) return;
+        openProductDetail(card.dataset.id);
+      });
+    });
+
+    productGridEl.querySelectorAll(".favorite-toggle").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFavorite(btn.dataset.fav);
+      });
+    });
+  }, 120);
 }
 
-function renderProductDetail(productId) {
-  const product = getProduct(productId);
-  if (!product) return;
+vinSearchBtn.addEventListener("click", () => {
+  state.search = vinInputEl.value;
+  state.category = null;
+  state.brand = null;
+  state.tab = "all";
+  syncFilterChips();
+  renderCategoryGrid();
+  renderBrandGrid();
+  renderProducts();
+  productGridEl.scrollIntoView({ behavior: "smooth", block: "start" });
+});
 
-  const models = product.compatible_models && product.compatible_models.length
-    ? `<p class="product-detail-models">Подходит: ${product.compatible_models.join(", ")}</p>`
-    : "";
+vinInputEl.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") vinSearchBtn.click();
+});
 
-  productDetailBody.innerHTML = `
-    <img src="${product.image}" alt="${product.name}" class="product-detail-image" />
-    <span class="product-brand">${product.brand}</span>
-    <h3 class="product-detail-name">${product.name}</h3>
-    ${models}
-    ${product.description ? `<p class="product-detail-description">${product.description}</p>` : ""}
-    <div class="detail-price-row">
-      <span class="detail-price">${formatPrice(product.price)}</span>
-      ${addControlHtml(product)}
-    </div>
-  `;
+/* ---------- избранное ---------- */
+
+function toggleFavorite(id) {
+  const idx = state.favorites.indexOf(id);
+  if (idx >= 0) {
+    state.favorites.splice(idx, 1);
+  } else {
+    state.favorites.push(id);
+    showToast("Добавлено в избранное");
+  }
+  saveJSON("fourmatic_favorites", state.favorites);
+  updateFavoritesBadge();
+  renderProducts();
+  if (!productOverlay.classList.contains("hidden")) {
+    const current = state.products.find((p) => p.id === productOverlay.dataset.productId);
+    if (current) renderProductDetail(current);
+  }
 }
 
-function openProductDetail(productId) {
-  renderProductDetail(productId);
-  productOverlay.dataset.productId = productId;
-  productOverlay.classList.remove("hidden");
+function updateFavoritesBadge() {
+  if (state.favorites.length > 0) {
+    favoritesCountEl.textContent = state.favorites.length;
+    favoritesCountEl.classList.remove("hidden");
+  } else {
+    favoritesCountEl.classList.add("hidden");
+  }
 }
 
-function cartItemHtml(entry) {
-  const { product, qty } = entry;
-  return `
-    <div class="cart-item">
-      <img src="${product.image}" alt="${product.name}" />
-      <div class="cart-item-info">
-        <div class="cart-item-name">${product.brand} ${product.name}</div>
-        <div class="cart-item-price">${formatPrice(product.price)} × ${qty}</div>
-      </div>
-      <div class="qty-control" data-product="${product.id}">
-        <button class="qty-minus" type="button">−</button>
-        <span>${qty}</span>
-        <button class="qty-plus" type="button">+</button>
-      </div>
-    </div>
-  `;
+function renderFavorites() {
+  const items = state.products.filter((p) => state.favorites.includes(p.id));
+  if (!items.length) {
+    favoritesItemsEl.innerHTML = `<div class="cart-empty">Пока пусто. Нажмите ♡ на карточке товара.</div>`;
+    return;
+  }
+  favoritesItemsEl.innerHTML = items
+    .map(
+      (p) => `
+      <div class="cart-item" data-id="${escapeAttr(p.id)}">
+        <img src="${escapeAttr(p.image)}" alt="" />
+        <div class="cart-item-info">
+          <div class="cart-item-name">${escapeHtml(p.name)}</div>
+          <div class="cart-item-price">${formatPrice(p.price)}</div>
+        </div>
+        <button class="favorite-toggle active" data-fav="${escapeAttr(p.id)}" type="button">♥</button>
+      </div>`
+    )
+    .join("");
+
+  favoritesItemsEl.querySelectorAll(".cart-item").forEach((row) => {
+    row.addEventListener("click", (e) => {
+      if (e.target.closest(".favorite-toggle")) return;
+      favoritesOverlay.classList.add("hidden");
+      openProductDetail(row.dataset.id);
+    });
+  });
+
+  favoritesItemsEl.querySelectorAll(".favorite-toggle").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFavorite(btn.dataset.fav);
+      renderFavorites();
+    });
+  });
+}
+
+favoritesBtn.addEventListener("click", () => {
+  renderFavorites();
+  favoritesOverlay.classList.remove("hidden");
+});
+closeFavoritesBtn.addEventListener("click", () => favoritesOverlay.classList.add("hidden"));
+
+/* ---------- гараж ---------- */
+
+function renderGarage() {
+  if (!state.garage.length) {
+    garageCarsEl.innerHTML = "";
+  } else {
+    garageCarsEl.innerHTML = state.garage
+      .map(
+        (car, i) => `<button class="garage-chip" data-index="${i}" type="button">${escapeHtml(car)}</button>`
+      )
+      .join("");
+    garageCarsEl.querySelectorAll(".garage-chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const car = state.garage[Number(chip.dataset.index)];
+        state.search = car;
+        vinInputEl.value = car;
+        state.category = null;
+        state.brand = null;
+        renderCategoryGrid();
+        renderBrandGrid();
+        renderProducts();
+        productGridEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+  }
+
+  if (!state.garage.length) {
+    garageListEl.innerHTML = `<div class="cart-empty">Автомобилей пока нет</div>`;
+  } else {
+    garageListEl.innerHTML = state.garage
+      .map(
+        (car, i) => `
+        <div class="garage-list-item">
+          <span>${escapeHtml(car)}</span>
+          <button class="garage-remove-btn" data-index="${i}" type="button">✕</button>
+        </div>`
+      )
+      .join("");
+    garageListEl.querySelectorAll(".garage-remove-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        state.garage.splice(Number(btn.dataset.index), 1);
+        saveJSON("fourmatic_garage", state.garage);
+        renderGarage();
+      });
+    });
+  }
+}
+
+garageManageBtn.addEventListener("click", () => {
+  renderGarage();
+  garageOverlay.classList.remove("hidden");
+});
+closeGarageBtn.addEventListener("click", () => garageOverlay.classList.add("hidden"));
+
+garageForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const value = garageModelInput.value.trim();
+  if (!value) return;
+  state.garage.push(value);
+  saveJSON("fourmatic_garage", state.garage);
+  garageModelInput.value = "";
+  renderGarage();
+  showToast("Автомобиль добавлен в гараж");
+});
+
+/* ---------- корзина ---------- */
+
+function cartEntries() {
+  return Object.entries(state.cart)
+    .filter(([, qty]) => qty > 0)
+    .map(([id, qty]) => {
+      const product = state.products.find((p) => p.id === id);
+      return product ? { product, qty } : null;
+    })
+    .filter(Boolean);
+}
+
+function cartCount() {
+  return cartEntries().reduce((sum, { qty }) => sum + qty, 0);
+}
+
+function cartTotal() {
+  return cartEntries().reduce((sum, { product, qty }) => sum + product.price * qty, 0);
+}
+
+function updateCartBadge() {
+  cartCountEl.textContent = cartCount();
+}
+
+function setQty(id, qty) {
+  if (qty <= 0) {
+    delete state.cart[id];
+  } else {
+    state.cart[id] = qty;
+  }
+  updateCartBadge();
+  renderCart();
 }
 
 function renderCart() {
   const entries = cartEntries();
-  cartItemsEl.innerHTML = entries.length
-    ? entries.map(cartItemHtml).join("")
-    : '<div class="cart-empty">Корзина пуста</div>';
+  if (!entries.length) {
+    cartItemsEl.innerHTML = `<div class="cart-empty">Корзина пуста</div>`;
+    checkoutBtn.disabled = true;
+  } else {
+    cartItemsEl.innerHTML = entries
+      .map(
+        ({ product, qty }) => `
+        <div class="cart-item">
+          <img src="${escapeAttr(product.image)}" alt="" />
+          <div class="cart-item-info">
+            <div class="cart-item-name">${escapeHtml(product.brand)} ${escapeHtml(product.name)}</div>
+            <div class="cart-item-price">${formatPrice(product.price)} × ${qty}</div>
+            <div class="qty-control" data-product="${escapeAttr(product.id)}">
+              <button class="qty-minus" type="button">−</button>
+              <span>${qty}</span>
+              <button class="qty-plus" type="button">+</button>
+            </div>
+          </div>
+        </div>`
+      )
+      .join("");
+    checkoutBtn.disabled = false;
+  }
+
   cartTotalEl.textContent = formatPrice(cartTotal());
-  checkoutBtn.disabled = entries.length === 0;
 }
-
-grid.addEventListener("click", (event) => {
-  const card = event.target.closest(".product-card[data-product-id]");
-  if (!card) return;
-  openProductDetail(card.dataset.productId);
-});
-
-productDetailBody.addEventListener("click", (event) => {
-  const addBtn = event.target.closest(".add-btn[data-product]");
-  if (addBtn) {
-    setQty(addBtn.dataset.product, cartQty(addBtn.dataset.product) + 1);
-    return;
-  }
-  const qtyControl = event.target.closest(".qty-control");
-  if (qtyControl) {
-    const { product } = qtyControl.dataset;
-    if (event.target.closest(".qty-plus")) setQty(product, cartQty(product) + 1);
-    if (event.target.closest(".qty-minus")) setQty(product, cartQty(product) - 1);
-  }
-});
-
-closeProductBtn.addEventListener("click", () => {
-  productOverlay.classList.add("hidden");
-});
 
 cartItemsEl.addEventListener("click", (event) => {
   const qtyControl = event.target.closest(".qty-control");
   if (!qtyControl) return;
   const { product } = qtyControl.dataset;
-  if (event.target.closest(".qty-plus")) setQty(product, cartQty(product) + 1);
-  if (event.target.closest(".qty-minus")) setQty(product, cartQty(product) - 1);
-});
-
-function renderGridAnimated() {
-  grid.classList.add("grid-leaving");
-  window.setTimeout(() => {
-    renderGrid();
-    grid.classList.remove("grid-leaving");
-  }, 150);
-}
-
-filtersEl.addEventListener("click", (event) => {
-  const chip = event.target.closest(".filter-chip");
-  if (!chip) return;
-  if (chip.dataset.tab === state.tab) return;
-  state.tab = chip.dataset.tab;
-  renderFilters();
-  renderGridAnimated();
-});
-
-categoryRailEl.addEventListener("click", (event) => {
-  const chip = event.target.closest(".category-chip");
-  if (!chip) return;
-  if (chip.dataset.category === state.category) return;
-  state.category = chip.dataset.category;
-  renderCategoryRail();
-  renderGridAnimated();
-});
-
-searchInput.addEventListener("input", () => {
-  state.search = searchInput.value;
-  renderGrid();
+  const current = state.cart[product] || 0;
+  if (event.target.closest(".qty-plus")) setQty(product, current + 1);
+  if (event.target.closest(".qty-minus")) setQty(product, current - 1);
 });
 
 cartBtn.addEventListener("click", () => {
   renderCart();
   cartOverlay.classList.remove("hidden");
 });
+closeCartBtn.addEventListener("click", () => cartOverlay.classList.add("hidden"));
 
-closeCartBtn.addEventListener("click", () => {
+checkoutBtn.addEventListener("click", () => {
+  if (!cartEntries().length) return;
   cartOverlay.classList.add("hidden");
+  contactOverlay.classList.remove("hidden");
 });
-
-function clearCartAndClose() {
-  state.cart = {};
-  renderCartBadge();
-  renderCart();
-  cartOverlay.classList.add("hidden");
-  contactOverlay.classList.add("hidden");
-}
-
-async function submitOrder(extraPayload) {
-  const items = cartEntries().map((entry) => ({ id: entry.productId, qty: entry.qty }));
-  const response = await fetch("/api/checkout", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ initData: tg?.initData || "", items, ...extraPayload }),
-  });
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.error || "checkout_failed");
-  }
-  return data;
-}
-
-checkoutBtn.addEventListener("click", async () => {
-  if (cartEntries().length === 0) return;
-
-  if (!state.paymentsEnabled) {
-    cartOverlay.classList.add("hidden");
-    contactOverlay.classList.remove("hidden");
-    return;
-  }
-
-  checkoutBtn.disabled = true;
-  checkoutBtn.textContent = "Оформляем...";
-
-  try {
-    const data = await submitOrder({});
-    if (tg?.openInvoice) {
-      tg.openInvoice(data.invoice_link, (status) => {
-        if (status === "paid") {
-          clearCartAndClose();
-          showToast("Оплата прошла успешно!");
-        } else if (status === "failed") {
-          showToast("Оплата не прошла.");
-        }
-      });
-    } else {
-      window.open(data.invoice_link, "_blank");
-    }
-  } catch (err) {
-    showToast("Не удалось оформить заказ. Попробуйте ещё раз.");
-  } finally {
-    checkoutBtn.disabled = cartEntries().length === 0;
-    checkoutBtn.textContent = "Оформить заказ";
-  }
-});
+closeContactBtn.addEventListener("click", () => contactOverlay.classList.add("hidden"));
 
 contactForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  if (cartEntries().length === 0) return;
+  if (!cartEntries().length) return;
 
   const submitBtn = document.getElementById("submit-order-btn");
   const formData = new FormData(contactForm);
@@ -372,12 +563,24 @@ contactForm.addEventListener("submit", async (event) => {
   }
 
   submitBtn.disabled = true;
-  submitBtn.textContent = "Отправляем...";
+  submitBtn.textContent = "Отправляем…";
 
   try {
-    const data = await submitOrder({ contact });
-    clearCartAndClose();
+    const items = cartEntries().map(({ product, qty }) => ({ id: product.id, qty }));
+    const response = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ initData: tg?.initData || "", items, contact }),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || "checkout_failed");
+    }
+    state.cart = {};
+    updateCartBadge();
+    renderCart();
     contactForm.reset();
+    contactOverlay.classList.add("hidden");
     showToast(`Заказ №${data.order_id} отправлен! Мы свяжемся с вами в этом чате.`);
   } catch (err) {
     showToast("Не удалось отправить заказ. Попробуйте ещё раз.");
@@ -387,21 +590,84 @@ contactForm.addEventListener("submit", async (event) => {
   }
 });
 
-closeContactBtn.addEventListener("click", () => {
-  contactOverlay.classList.add("hidden");
-});
+/* ---------- детальный просмотр товара ---------- */
 
-async function loadConfig() {
-  const response = await fetch("/api/config");
-  const data = await response.json();
-  state.paymentsEnabled = Boolean(data.payments_enabled);
+function openProductDetail(id) {
+  const product = state.products.find((p) => p.id === id);
+  if (!product) return;
+  renderProductDetail(product);
+  productOverlay.classList.remove("hidden");
 }
 
-async function loadProducts() {
-  const response = await fetch("/api/products");
-  state.products = await response.json();
-  renderCategoryRail();
-  renderGrid();
+function renderProductDetail(product) {
+  productOverlay.dataset.productId = product.id;
+  const isFav = state.favorites.includes(product.id);
+  const compatTags = (product.compatible_models || [])
+    .map((m) => `<span class="compat-tag">${escapeHtml(m)}</span>`)
+    .join("");
+  const inCart = state.cart[product.id] || 0;
+
+  productDetailBodyEl.innerHTML = `
+    <img class="product-detail-image" src="${escapeAttr(product.image)}" alt="${escapeAttr(product.name)}" />
+    <div class="product-detail-name">${escapeHtml(product.name)}</div>
+    <div class="product-detail-meta">
+      <span>Бренд: ${escapeHtml(product.brand)}</span>
+      <span>OEM-номер: ${escapeHtml(product.oem || "—")}</span>
+    </div>
+    <p class="product-detail-description">${escapeHtml(product.description || "")}</p>
+    ${
+      compatTags
+        ? `<div class="compat-block">
+            <div class="compat-block-title">Совместимость</div>
+            <div class="compat-tags">${compatTags}</div>
+          </div>`
+        : ""
+    }
+    <div class="detail-price-row">
+      <div>
+        <div class="detail-price">${formatPrice(product.price)}</div>
+        <div class="detail-availability">${product.in_stock ? "В наличии" : "Под заказ"} · доставка ${escapeHtml(product.delivery_days || "—")} дн.</div>
+      </div>
+    </div>
+    <div class="detail-actions">
+      <button class="favorite-btn-detail${isFav ? " active" : ""}" id="detail-fav-btn" type="button">${isFav ? "♥" : "♡"}</button>
+      <button class="quick-order-btn" id="detail-quick-order-btn" type="button" ${product.in_stock ? "" : "disabled"}>Купить в 1 клик</button>
+      <button class="add-btn" id="detail-add-btn" type="button" ${product.in_stock ? "" : "disabled"}>${inCart > 0 ? `В корзине: ${inCart}` : "В корзину"}</button>
+    </div>
+  `;
+
+  document.getElementById("detail-fav-btn").addEventListener("click", () => toggleFavorite(product.id));
+
+  document.getElementById("detail-add-btn").addEventListener("click", () => {
+    setQty(product.id, (state.cart[product.id] || 0) + 1);
+    renderProductDetail(product);
+    showToast("Добавлено в корзину");
+  });
+
+  document.getElementById("detail-quick-order-btn").addEventListener("click", () => {
+    setQty(product.id, (state.cart[product.id] || 0) + 1);
+    productOverlay.classList.add("hidden");
+    cartOverlay.classList.add("hidden");
+    contactOverlay.classList.remove("hidden");
+  });
 }
 
-Promise.all([loadConfig(), loadProducts()]);
+closeProductBtn.addEventListener("click", () => productOverlay.classList.add("hidden"));
+
+/* ---------- утилиты ---------- */
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (ch) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  })[ch]);
+}
+
+function escapeAttr(value) {
+  return escapeHtml(value);
+}
+
+loadInitial();
