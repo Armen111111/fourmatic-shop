@@ -8,14 +8,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=8" />
+  <link rel="stylesheet" href="style.css?v=9" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
   <header class="header">
     <div class="brand">
-      <h1>FOURMATIC</h1>
-      <span class="brand-tagline">Запчасти Mercedes-Benz</span>
+      <span class="brand-mark" aria-hidden="true"></span>
+      <div class="brand-text">
+        <h1>FOUR<span>MATIC</span></h1>
+        <span class="brand-tagline">Mercedes&#8209;Benz Parts</span>
+      </div>
     </div>
     <div class="header-actions">
       <button id="favorites-btn" class="icon-btn-round" type="button" title="Избранное">
@@ -31,60 +34,47 @@
 
   <div id="tab-home" class="tab-panel">
 
-  <section class="poster-hero">
-    <div class="poster-dots" aria-hidden="true"></div>
-    <div class="poster-sweep" aria-hidden="true"></div>
-    <div class="poster-hero-content">
-      <span class="poster-eyebrow">Mercedes-Benz · Оригинал и аналоги</span>
-      <h1 class="poster-title">
-        <span class="poster-line"><span>ОРИГИНАЛ</span></span>
-        <span class="poster-line"><span>БЕЗ</span></span>
-        <span class="poster-line"><span>ОШИБОК</span></span>
-      </h1>
-      <p class="poster-subtitle">Каждая деталь проверена. Каждый номер подтверждён.</p>
-    </div>
+  <section class="intro fade-in">
+    <span class="intro-eyebrow">Mercedes&#8209;Benz · Официальный подбор запчастей</span>
+    <h2 class="intro-title">Подбор оригинальных деталей и&nbsp;качественных аналогов</h2>
+    <p class="intro-subtitle">По VIN и OEM-номеру, с проверкой совместимости с вашим автомобилем.</p>
+    <div class="intro-rule"></div>
   </section>
 
   <section class="hero-slider" id="hero-slider">
     <div class="slider-track" id="slider-track">
       <div class="hero-slide">
-        <span class="slide-eyebrow"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/></svg>Только оригинал</span>
-        <h2 class="slide-title">Запчасти, в которых уверен ваш мастер</h2>
-        <p class="slide-text">OEM-номера, проверенная совместимость, никакой лотереи</p>
+        <span class="slide-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/></svg></span>
+        <h3 class="slide-title">Оригинальные детали и качественные аналоги</h3>
+        <p class="slide-text">Подбор по VIN и OEM с проверкой совместимости.</p>
       </div>
       <div class="hero-slide">
-        <span class="slide-eyebrow"><svg class="icon" viewBox="0 0 24 24"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/><path d="M21 21l-4.3-4.3"/></svg>Подбор по VIN</span>
-        <h2 class="slide-title">Введите VIN — получите точный список деталей</h2>
-        <p class="slide-text">Экономим ваше время на подборе аналогов</p>
+        <span class="slide-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/><path d="M21 21l-4.3-4.3"/></svg></span>
+        <h3 class="slide-title">Подбор по VIN</h3>
+        <p class="slide-text">Точный подбор деталей именно под ваш автомобиль.</p>
       </div>
       <div class="hero-slide">
-        <span class="slide-eyebrow"><svg class="icon" viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>Быстрая доставка</span>
-        <h2 class="slide-title">От 1–2 дней по всей России</h2>
-        <p class="slide-text">СДЭК, Почта России, Яндекс Доставка или самовывоз</p>
+        <span class="slide-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13v5a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H6v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5z"/></svg></span>
+        <h3 class="slide-title">Доставка</h3>
+        <p class="slide-text">Отправляем по всей России проверенными транспортными компаниями.</p>
       </div>
       <div class="hero-slide">
-        <span class="slide-eyebrow"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2l2.5 5 5.5.8-4 4 1 5.5-5-2.6-5 2.6 1-5.5-4-4 5.5-.8L12 2z"/></svg>Проверенные бренды</span>
-        <h2 class="slide-title">Bosch, ATE, Mann-Filter, Bilstein и другие</h2>
-        <p class="slide-text">Работаем только с надёжными производителями</p>
+        <span class="slide-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2l2.5 5 5.5.8-4 4 1 5.5-5-2.6-5 2.6 1-5.5-4-4 5.5-.8L12 2z"/></svg></span>
+        <h3 class="slide-title">Проверенные бренды</h3>
+        <p class="slide-text">Bosch, ATE, MANN, Mahle, Bilstein, Lemförder, Sachs, Febi, INA, LuK.</p>
       </div>
     </div>
     <div class="slider-dots" id="slider-dots"></div>
   </section>
 
   <section class="hero fade-in">
-    <p class="hero-subtitle">Поиск по VIN, OEM-номеру, артикулу или названию детали</p>
-
     <div class="vin-search-row">
-      <input type="text" id="vin-input" class="vin-input" placeholder="Введите VIN, OEM-номер или название детали…" />
-      <button id="vin-search-btn" class="vin-search-btn" type="button">Найти запчасти</button>
+      <span class="vin-search-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/><path d="M21 21l-4.3-4.3"/></svg></span>
+      <input type="text" id="vin-input" class="vin-input" placeholder="Введите VIN, артикул или название детали" />
+      <button id="vin-search-btn" class="vin-search-btn" type="button" aria-label="Найти">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
     </div>
-
-    <ul class="trust-list">
-      <li><svg class="icon" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg>Только Mercedes-Benz</li>
-      <li><svg class="icon" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg>Оригинал и аналоги</li>
-      <li><svg class="icon" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg>Быстрая доставка</li>
-      <li><svg class="icon" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg>Проверка совместимости</li>
-    </ul>
   </section>
 
   <section class="garage-strip fade-in">
@@ -190,7 +180,13 @@
       </div>
       <form id="garage-form" class="contact-form">
         <label>Модель автомобиля
-          <input type="text" id="garage-model-input" maxlength="60" placeholder="Например, W213 E-Class" />
+          <input type="text" id="garage-model-input" maxlength="60" placeholder="Например, W213 E-Class" required />
+        </label>
+        <label>Год выпуска
+          <input type="text" id="garage-year-input" maxlength="4" placeholder="Например, 2019" />
+        </label>
+        <label>Двигатель
+          <input type="text" id="garage-engine-input" maxlength="40" placeholder="Например, 2.0 бензин" />
         </label>
         <button type="submit" class="checkout-btn">Добавить в гараж</button>
       </form>
@@ -267,6 +263,6 @@
 
   <div id="toast" class="toast hidden"></div>
 
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=9"></script>
 </body>
 </html>

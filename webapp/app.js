@@ -92,6 +92,8 @@ const garageCarsEl = document.getElementById("garage-cars");
 const garageListEl = document.getElementById("garage-list");
 const garageForm = document.getElementById("garage-form");
 const garageModelInput = document.getElementById("garage-model-input");
+const garageYearInput = document.getElementById("garage-year-input");
+const garageEngineInput = document.getElementById("garage-engine-input");
 
 const contactOverlay = document.getElementById("contact-overlay");
 const closeContactBtn = document.getElementById("close-contact");
@@ -137,7 +139,9 @@ function saveJSON(key, value) {
 }
 
 state.favorites = loadJSON("fourmatic_favorites", []);
-state.garage = loadJSON("fourmatic_garage", []);
+state.garage = loadJSON("fourmatic_garage", []).map((car) =>
+  typeof car === "string" ? { model: car, year: "", engine: "" } : car
+);
 
 let toastTimer = null;
 function showToast(message) {
@@ -289,7 +293,7 @@ function renderCategoryGrid() {
     .map(
       (cat) => `
       <button class="category-card${state.category === cat ? " active" : ""}" data-category="${escapeAttr(cat)}" type="button">
-        ${CATEGORY_ICONS[cat] || ICON_DEFAULT}
+        <span class="category-card-icon-wrap">${CATEGORY_ICONS[cat] || ICON_DEFAULT}</span>
         <span class="category-card-label">${escapeHtml(cat)}</span>
       </button>`
     )
@@ -317,7 +321,8 @@ function renderBrandGrid() {
     .map(
       (brand) => `
       <button class="brand-card${state.brand === brand ? " active" : ""}" data-brand="${escapeAttr(brand)}" type="button">
-        ${escapeHtml(brand)}
+        <span class="brand-card-mark">${escapeHtml(brand.trim().charAt(0).toUpperCase())}</span>
+        <span class="brand-card-label">${escapeHtml(brand)}</span>
       </button>`
     )
     .join("");
@@ -543,27 +548,54 @@ closeFavoritesBtn.addEventListener("click", () => favoritesOverlay.classList.add
 
 /* ---------- гараж ---------- */
 
+const GARAGE_CAR_ICON = '<svg class="icon" viewBox="0 0 24 24"><path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13v5a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H6v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5z"/></svg>';
+
+function garageSubtitle(car) {
+  return [car.year, car.engine].filter(Boolean).join(" · ");
+}
+
 function renderGarage() {
+  const addCard = `
+    <button class="garage-add-card" id="garage-add-card" type="button">
+      <span class="garage-add-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+      <span>Добавить авто</span>
+    </button>`;
+
   if (!state.garage.length) {
-    garageCarsEl.innerHTML = "";
+    garageCarsEl.innerHTML = addCard;
   } else {
-    garageCarsEl.innerHTML = state.garage
-      .map(
-        (car, i) => `<button class="garage-chip" data-index="${i}" type="button">${escapeHtml(car)}</button>`
-      )
-      .join("");
-    garageCarsEl.querySelectorAll(".garage-chip").forEach((chip) => {
-      chip.addEventListener("click", () => {
-        const car = state.garage[Number(chip.dataset.index)];
-        state.search = car;
-        vinInputEl.value = car;
-        state.category = null;
-        state.brand = null;
-        renderCategoryGrid();
-        renderBrandGrid();
-        renderProducts();
-        productGridEl.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
+    garageCarsEl.innerHTML =
+      state.garage
+        .map(
+          (car, i) => `
+        <button class="garage-car-card" data-index="${i}" type="button">
+          <span class="garage-car-thumb">${GARAGE_CAR_ICON}</span>
+          <span class="garage-car-model">${escapeHtml(car.model)}</span>
+          ${garageSubtitle(car) ? `<span class="garage-car-meta">${escapeHtml(garageSubtitle(car))}</span>` : ""}
+        </button>`
+        )
+        .join("") + addCard;
+  }
+
+  garageCarsEl.querySelectorAll(".garage-car-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      const car = state.garage[Number(card.dataset.index)];
+      state.search = car.model;
+      vinInputEl.value = car.model;
+      state.category = null;
+      state.brand = null;
+      renderCategoryGrid();
+      renderBrandGrid();
+      renderProducts();
+      switchTab("catalog");
+    });
+  });
+
+  const addBtn = document.getElementById("garage-add-card");
+  if (addBtn) {
+    addBtn.addEventListener("click", () => {
+      renderGarage();
+      garageOverlay.classList.remove("hidden");
     });
   }
 
@@ -574,7 +606,11 @@ function renderGarage() {
       .map(
         (car, i) => `
         <div class="garage-list-item">
-          <span>${escapeHtml(car)}</span>
+          <span class="garage-car-thumb">${GARAGE_CAR_ICON}</span>
+          <div class="garage-list-item-info">
+            <span class="garage-list-item-model">${escapeHtml(car.model)}</span>
+            ${garageSubtitle(car) ? `<span class="garage-list-item-meta">${escapeHtml(garageSubtitle(car))}</span>` : ""}
+          </div>
           <button class="garage-remove-btn" data-index="${i}" type="button"><svg class="icon" viewBox="0 0 24 24" style="width:15px;height:15px"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
         </div>`
       )
@@ -597,11 +633,15 @@ closeGarageBtn.addEventListener("click", () => garageOverlay.classList.add("hidd
 
 garageForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  const value = garageModelInput.value.trim();
-  if (!value) return;
-  state.garage.push(value);
+  const model = garageModelInput.value.trim();
+  if (!model) return;
+  state.garage.push({
+    model,
+    year: garageYearInput.value.trim(),
+    engine: garageEngineInput.value.trim(),
+  });
   saveJSON("fourmatic_garage", state.garage);
-  garageModelInput.value = "";
+  garageForm.reset();
   renderGarage();
   showToast("Автомобиль добавлен в гараж");
 });
