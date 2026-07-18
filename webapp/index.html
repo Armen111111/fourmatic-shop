@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=5" />
+  <link rel="stylesheet" href="style.css?v=6" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -28,6 +28,29 @@
       </button>
     </div>
   </header>
+
+  <div id="tab-home" class="tab-panel">
+
+  <section class="poster-hero">
+    <div class="poster-dots" aria-hidden="true"></div>
+    <div class="poster-sweep" aria-hidden="true"></div>
+    <div class="poster-hero-content">
+      <span class="poster-eyebrow">Mercedes-Benz · Оригинал и аналоги</span>
+      <h1 class="poster-title">
+        <span class="poster-line"><span>ОРИГИНАЛ</span></span>
+        <span class="poster-line"><span>БЕЗ</span></span>
+        <span class="poster-line"><span>ОШИБОК</span></span>
+      </h1>
+      <p class="poster-subtitle">Каждая деталь проверена. Каждый номер подтверждён.</p>
+    </div>
+    <svg class="poster-car" viewBox="0 0 400 120" aria-hidden="true">
+      <path class="poster-car-body" d="M15 82 Q20 55 55 50 L100 50 Q125 30 165 28 L245 28 Q275 30 292 50 L370 52 Q385 54 385 70 L385 82 Z" />
+      <path class="poster-car-glass" d="M118 48 Q135 34 165 32 L228 32 Q252 34 268 48 Z" />
+      <circle class="poster-car-wheel" cx="95" cy="84" r="19" />
+      <circle class="poster-car-wheel" cx="320" cy="84" r="19" />
+      <line class="poster-car-line" x1="15" y1="82" x2="385" y2="82" />
+    </svg>
+  </section>
 
   <section class="hero-slider" id="hero-slider">
     <div class="slider-track" id="slider-track">
@@ -89,7 +112,22 @@
     <div id="brand-grid" class="brand-grid"></div>
   </section>
 
-  <section class="catalog-section fade-in">
+  <footer class="footer">
+    <div class="footer-title">Помогаем найти нужную деталь</div>
+    <p class="footer-text">Если не нашли деталь в каталоге — напишите нам, поможем подобрать вручную.</p>
+    <div class="footer-links">
+      <a href="https://t.me/fourmaticshop_bot" target="_blank" rel="noopener">Telegram</a>
+      <span>·</span>
+      <a href="#" id="policy-link">Политика конфиденциальности</a>
+      <span>·</span>
+      <a href="#" id="terms-link">Пользовательское соглашение</a>
+    </div>
+  </footer>
+
+  </div>
+
+  <div id="tab-catalog" class="tab-panel hidden">
+  <section class="catalog-section">
     <div class="catalog-section-head">
       <h3 class="section-title">Каталог</h3>
       <nav class="quick-filters" id="filters">
@@ -103,19 +141,29 @@
       <button id="clear-filter-btn" type="button">Сбросить</button>
     </div>
     <main id="product-grid" class="product-grid"></main>
+    <button id="load-more-btn" class="load-more-btn hidden" type="button">Показать ещё</button>
   </section>
+  </div>
 
-  <footer class="footer">
-    <div class="footer-title">Помогаем найти нужную деталь</div>
-    <p class="footer-text">Если не нашли деталь в каталоге — напишите нам, поможем подобрать вручную.</p>
-    <div class="footer-links">
-      <a href="https://t.me/fourmaticshop_bot" target="_blank" rel="noopener">Telegram</a>
-      <span>·</span>
-      <a href="#" id="policy-link">Политика конфиденциальности</a>
-      <span>·</span>
-      <a href="#" id="terms-link">Пользовательское соглашение</a>
-    </div>
-  </footer>
+  <nav class="bottom-nav">
+    <button class="bottom-nav-item active" data-tab="home" type="button">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/></svg>
+      <span>Главная</span>
+    </button>
+    <button class="bottom-nav-item" data-tab="catalog" type="button">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16l-6 8v6l-4 2v-8L4 4z"/></svg>
+      <span>Каталог</span>
+    </button>
+    <button class="bottom-nav-item" data-tab="favorites" type="button">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.5 3 6.7 5.2 4.5 8 4.5c1.6 0 3 .8 4 2.1 1-1.3 2.4-2.1 4-2.1 2.8 0 5 2.2 5 5 0 4.1-4.6 7.8-8.2 10.7-.2.2-.5.3-.8.3z"/></svg>
+      <span>Избранное</span>
+    </button>
+    <button class="bottom-nav-item" data-tab="cart" type="button">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+      <span>Корзина</span>
+      <span id="bottom-nav-cart-count" class="mini-count hidden">0</span>
+    </button>
+  </nav>
 
   <div id="cart-overlay" class="overlay hidden">
     <div class="sheet">
@@ -226,6 +274,6 @@
 
   <div id="toast" class="toast hidden"></div>
 
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>

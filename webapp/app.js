@@ -12,6 +12,8 @@ const state = {
   favorites: [],
   garage: [],
   paymentsEnabled: false,
+  visibleCount: 20,
+  activeTab: "home",
 };
 
 function icon(paths) {
@@ -55,6 +57,11 @@ const CATEGORY_ICONS = {
 };
 
 const productGridEl = document.getElementById("product-grid");
+const loadMoreBtn = document.getElementById("load-more-btn");
+const tabHomeEl = document.getElementById("tab-home");
+const tabCatalogEl = document.getElementById("tab-catalog");
+const bottomNavItems = document.querySelectorAll(".bottom-nav-item");
+const bottomNavCartCountEl = document.getElementById("bottom-nav-cart-count");
 const categoryGridEl = document.getElementById("category-grid");
 const brandGridEl = document.getElementById("brand-grid");
 const filtersEl = document.getElementById("filters");
@@ -95,6 +102,26 @@ const closeProductBtn = document.getElementById("close-product");
 const productDetailBodyEl = document.getElementById("product-detail-body");
 
 const toastEl = document.getElementById("toast");
+
+function switchTab(tab) {
+  if (tab === "favorites") {
+    favoritesOverlay.classList.remove("hidden");
+    return;
+  }
+  if (tab === "cart") {
+    cartOverlay.classList.remove("hidden");
+    return;
+  }
+  state.activeTab = tab;
+  tabHomeEl.classList.toggle("hidden", tab !== "home");
+  tabCatalogEl.classList.toggle("hidden", tab !== "catalog");
+  bottomNavItems.forEach((btn) => btn.classList.toggle("active", btn.dataset.tab === tab));
+  window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+}
+
+bottomNavItems.forEach((btn) => {
+  btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+});
 
 function loadJSON(key, fallback) {
   try {
@@ -278,6 +305,7 @@ function renderCategoryGrid() {
       renderCategoryGrid();
       renderBrandGrid();
       renderProducts();
+      switchTab("catalog");
     });
   });
 }
@@ -304,6 +332,7 @@ function renderBrandGrid() {
       renderCategoryGrid();
       renderBrandGrid();
       renderProducts();
+      switchTab("catalog");
     });
   });
 }
@@ -387,9 +416,13 @@ function productCardHtml(product, index) {
     </article>`;
 }
 
-function renderProducts() {
+const PAGE_SIZE = 20;
+
+function renderProducts(resetPage = true) {
+  if (resetPage) state.visibleCount = PAGE_SIZE;
   updateActiveFilterRow();
-  const items = filteredProducts();
+  const all = filteredProducts();
+  const items = all.slice(0, state.visibleCount || PAGE_SIZE);
   productGridEl.classList.add("grid-leaving");
   setTimeout(() => {
     if (!items.length) {
@@ -398,6 +431,7 @@ function renderProducts() {
       productGridEl.innerHTML = items.map((p, i) => productCardHtml(p, i)).join("");
     }
     productGridEl.classList.remove("grid-leaving");
+    loadMoreBtn.classList.toggle("hidden", items.length >= all.length);
 
     productGridEl.querySelectorAll(".product-card").forEach((card) => {
       card.addEventListener("click", (e) => {
@@ -415,6 +449,11 @@ function renderProducts() {
   }, 120);
 }
 
+loadMoreBtn.addEventListener("click", () => {
+  state.visibleCount = (state.visibleCount || PAGE_SIZE) + PAGE_SIZE;
+  renderProducts(false);
+});
+
 vinSearchBtn.addEventListener("click", () => {
   state.search = vinInputEl.value;
   state.category = null;
@@ -424,7 +463,7 @@ vinSearchBtn.addEventListener("click", () => {
   renderCategoryGrid();
   renderBrandGrid();
   renderProducts();
-  productGridEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  switchTab("catalog");
 });
 
 vinInputEl.addEventListener("keydown", (e) => {
@@ -588,7 +627,10 @@ function cartTotal() {
 }
 
 function updateCartBadge() {
-  cartCountEl.textContent = cartCount();
+  const count = cartCount();
+  cartCountEl.textContent = count;
+  bottomNavCartCountEl.textContent = count;
+  bottomNavCartCountEl.classList.toggle("hidden", count === 0);
 }
 
 function setQty(id, qty) {
