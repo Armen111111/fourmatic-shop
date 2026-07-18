@@ -27,7 +27,10 @@ def create_app(bot: Bot, config: Config) -> web.Application:
 
 
 async def handle_index(request: web.Request) -> web.Response:
-    return web.FileResponse(WEBAPP_DIR / "index.html")
+    response = web.FileResponse(WEBAPP_DIR / "index.html")
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    return response
 
 
 async def handle_get_config(request: web.Request) -> web.Response:
