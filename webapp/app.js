@@ -14,15 +14,44 @@ const state = {
   paymentsEnabled: false,
 };
 
+function icon(paths) {
+  return `<svg class="category-card-icon" viewBox="0 0 24 24">${paths}</svg>`;
+}
+
+const ICON_FILTER = icon('<path d="M4 4h16l-6 8v6l-4 2v-8L4 4z"/>');
+const ICON_BRAKE = icon('<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="6.5" r=".6" fill="currentColor" stroke="none"/><circle cx="12" cy="17.5" r=".6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12" r=".6" fill="currentColor" stroke="none"/><circle cx="17.5" cy="12" r=".6" fill="currentColor" stroke="none"/>');
+const ICON_SUSPENSION = icon('<path d="M12 2v3M9 5l6 2-6 2 6 2-6 2 6 2M12 17v5"/>');
+const ICON_ENGINE = icon('<path d="M4 10h4V7h4v3h4V7h2v3h1a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1z"/>');
+const ICON_LIGHT = icon('<path d="M12 3a6 6 0 0 0-3 11.2c.6.4 1 1 1 1.8h4c0-.8.4-1.4 1-1.8A6 6 0 0 0 12 3z"/><path d="M9.5 18.5h5M10.5 21h3"/>');
+const ICON_COOLING = icon('<rect x="4" y="6" width="16" height="12" rx="1.5"/><path d="M9 6v12M13 6v12M17 6v12"/>');
+const ICON_STEERING = icon('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/><path d="M12 5v5M7.8 15.5l3.4-2M16.2 15.5l-3.4-2"/>');
+const ICON_ELECTRIC = icon('<rect x="6" y="6" width="12" height="12" rx="1"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/>');
+const ICON_FLUID = icon('<path d="M12 3s7 7.5 7 12a7 7 0 0 1-14 0c0-4.5 7-12 7-12z"/>');
+const ICON_WIPER = icon('<path d="M5 19L19 5"/><path d="M13 5h6v6"/>');
+const ICON_DEFAULT = icon('<path d="M12 2l8 4.6v9.2L12 22l-8-4.6V6.6L12 2z"/><circle cx="12" cy="12" r="3"/>');
+const HEART_ICON = '<svg class="icon" viewBox="0 0 24 24"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.5 3 6.7 5.2 4.5 8 4.5c1.6 0 3 .8 4 2.1 1-1.3 2.4-2.1 4-2.1 2.8 0 5 2.2 5 5 0 4.1-4.6 7.8-8.2 10.7-.2.2-.5.3-.8.3z"/></svg>';
+
 const CATEGORY_ICONS = {
-  "Фильтры": "🧰",
-  "Тормозная система": "🛑",
-  "Подвеска": "🔧",
-  "Двигатель": "⚙️",
-  "Оптика": "💡",
-  "Охлаждение": "❄️",
-  "Рулевое управление": "🎛",
-  "Электрика": "🔋",
+  "Фильтры": ICON_FILTER,
+  "Тормозная система": ICON_BRAKE,
+  "Тормозные диски": ICON_BRAKE,
+  "Тормозные колодки": ICON_BRAKE,
+  "Подвеска": ICON_SUSPENSION,
+  "Пневмоподвеска": ICON_SUSPENSION,
+  "Амортизаторы": ICON_SUSPENSION,
+  "Пружины подвески": ICON_SUSPENSION,
+  "Ролики и натяжители": ICON_SUSPENSION,
+  "Двигатель": ICON_ENGINE,
+  "Сцепление": ICON_ENGINE,
+  "Оптика": ICON_LIGHT,
+  "Охлаждение": ICON_COOLING,
+  "Радиаторы": ICON_COOLING,
+  "Насосы системы охлаждения": ICON_COOLING,
+  "Рулевое управление": ICON_STEERING,
+  "Электрика": ICON_ELECTRIC,
+  "Датчики": ICON_ELECTRIC,
+  "Масла и жидкости": ICON_FLUID,
+  "Щётки стеклоочистителя": ICON_WIPER,
 };
 
 const productGridEl = document.getElementById("product-grid");
@@ -233,7 +262,7 @@ function renderCategoryGrid() {
     .map(
       (cat) => `
       <button class="category-card${state.category === cat ? " active" : ""}" data-category="${escapeAttr(cat)}" type="button">
-        <span class="category-card-icon">${CATEGORY_ICONS[cat] || "🔩"}</span>
+        ${CATEGORY_ICONS[cat] || ICON_DEFAULT}
         <span class="category-card-label">${escapeHtml(cat)}</span>
       </button>`
     )
@@ -340,11 +369,11 @@ function productCardHtml(product, index) {
   const isFav = state.favorites.includes(product.id);
   const stockClass = product.price_on_request ? "out" : product.in_stock ? "in" : "out";
   const stockLabel = product.price_on_request ? "Под запрос" : product.in_stock ? "В наличии" : "Под заказ";
-  const badge = product.is_hit ? "🏆 Хит" : product.is_new ? "🆕 Новинка" : "";
+  const badge = product.is_hit ? "Хит" : product.is_new ? "Новинка" : "";
   return `
     <article class="product-card" data-id="${escapeAttr(product.id)}" style="--card-index:${index % 12}">
       ${badge ? `<span class="product-badge">${badge}</span>` : ""}
-      <button class="favorite-toggle${isFav ? " active" : ""}" data-fav="${escapeAttr(product.id)}" type="button">${isFav ? "♥" : "♡"}</button>
+      <button class="favorite-toggle${isFav ? " active" : ""}" data-fav="${escapeAttr(product.id)}" type="button">${HEART_ICON}</button>
       <img src="${escapeAttr(product.image)}" alt="${escapeAttr(product.name)}" loading="lazy" />
       <div class="product-info">
         <span class="product-brand">${escapeHtml(product.brand)}</span>
@@ -433,7 +462,7 @@ function updateFavoritesBadge() {
 function renderFavorites() {
   const items = state.products.filter((p) => state.favorites.includes(p.id));
   if (!items.length) {
-    favoritesItemsEl.innerHTML = `<div class="cart-empty">Пока пусто. Нажмите ♡ на карточке товара.</div>`;
+    favoritesItemsEl.innerHTML = `<div class="cart-empty">Пока пусто. Нажмите на сердечко на карточке товара.</div>`;
     return;
   }
   favoritesItemsEl.innerHTML = items
@@ -445,7 +474,7 @@ function renderFavorites() {
           <div class="cart-item-name">${escapeHtml(p.name)}</div>
           <div class="cart-item-price">${formatPrice(p.price)}</div>
         </div>
-        <button class="favorite-toggle active" data-fav="${escapeAttr(p.id)}" type="button">♥</button>
+        <button class="favorite-toggle active" data-fav="${escapeAttr(p.id)}" type="button">${HEART_ICON}</button>
       </div>`
     )
     .join("");
@@ -507,7 +536,7 @@ function renderGarage() {
         (car, i) => `
         <div class="garage-list-item">
           <span>${escapeHtml(car)}</span>
-          <button class="garage-remove-btn" data-index="${i}" type="button">✕</button>
+          <button class="garage-remove-btn" data-index="${i}" type="button"><svg class="icon" viewBox="0 0 24 24" style="width:15px;height:15px"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
         </div>`
       )
       .join("");
@@ -711,7 +740,7 @@ function renderProductDetail(product) {
       </div>
     </div>
     <div class="detail-actions">
-      <button class="favorite-btn-detail${isFav ? " active" : ""}" id="detail-fav-btn" type="button">${isFav ? "♥" : "♡"}</button>
+      <button class="favorite-btn-detail${isFav ? " active" : ""}" id="detail-fav-btn" type="button">${HEART_ICON}</button>
       <button class="quick-order-btn" id="detail-quick-order-btn" type="button" ${product.in_stock && !product.price_on_request ? "" : "disabled"}>Купить в 1 клик</button>
       <button class="add-btn" id="detail-add-btn" type="button" ${product.in_stock && !product.price_on_request ? "" : "disabled"}>${inCart > 0 ? `В корзине: ${inCart}` : "В корзину"}</button>
     </div>

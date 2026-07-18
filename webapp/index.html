@@ -2,12 +2,13 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0b0b" />
   <title>FOURMATIC</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=4" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=5" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -18,10 +19,11 @@
     </div>
     <div class="header-actions">
       <button id="favorites-btn" class="icon-btn-round" type="button" title="Избранное">
-        ♡<span id="favorites-count" class="mini-count hidden">0</span>
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 20.5c-.3 0-.6-.1-.8-.3C7.6 17.3 3 13.6 3 9.5 3 6.7 5.2 4.5 8 4.5c1.6 0 3 .8 4 2.1 1-1.3 2.4-2.1 4-2.1 2.8 0 5 2.2 5 5 0 4.1-4.6 7.8-8.2 10.7-.2.2-.5.3-.8.3z"/></svg>
+        <span id="favorites-count" class="mini-count hidden">0</span>
       </button>
       <button id="cart-btn" class="cart-btn" type="button">
-        <span class="cart-btn-icon">🛒</span>
+        <svg class="icon" viewBox="0 0 24 24"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
         <span id="cart-count" class="cart-count">0</span>
       </button>
     </div>
@@ -29,23 +31,23 @@
 
   <section class="hero-slider" id="hero-slider">
     <div class="slider-track" id="slider-track">
-      <div class="hero-slide" style="--slide-grad: linear-gradient(135deg, #0057b8, #123a63)">
-        <span class="slide-eyebrow">🔧 Только оригинал</span>
+      <div class="hero-slide">
+        <span class="slide-eyebrow"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/></svg>Только оригинал</span>
         <h2 class="slide-title">Запчасти, в которых уверен ваш мастер</h2>
         <p class="slide-text">OEM-номера, проверенная совместимость, никакой лотереи</p>
       </div>
-      <div class="hero-slide" style="--slide-grad: linear-gradient(135deg, #1f232a, #0057b8)">
-        <span class="slide-eyebrow">🚗 Подбор по VIN</span>
+      <div class="hero-slide">
+        <span class="slide-eyebrow"><svg class="icon" viewBox="0 0 24 24"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/><path d="M21 21l-4.3-4.3"/></svg>Подбор по VIN</span>
         <h2 class="slide-title">Введите VIN — получите точный список деталей</h2>
         <p class="slide-text">Экономим ваше время на подборе аналогов</p>
       </div>
-      <div class="hero-slide" style="--slide-grad: linear-gradient(135deg, #0a3d91, #1f232a)">
-        <span class="slide-eyebrow">⚡ Быстрая доставка</span>
+      <div class="hero-slide">
+        <span class="slide-eyebrow"><svg class="icon" viewBox="0 0 24 24"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>Быстрая доставка</span>
         <h2 class="slide-title">От 1–2 дней по всей России</h2>
         <p class="slide-text">СДЭК, Почта России, Яндекс Доставка или самовывоз</p>
       </div>
-      <div class="hero-slide" style="--slide-grad: linear-gradient(135deg, #123a63, #0057b8)">
-        <span class="slide-eyebrow">🏆 Проверенные бренды</span>
+      <div class="hero-slide">
+        <span class="slide-eyebrow"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2l2.5 5 5.5.8-4 4 1 5.5-5-2.6-5 2.6 1-5.5-4-4 5.5-.8L12 2z"/></svg>Проверенные бренды</span>
         <h2 class="slide-title">Bosch, ATE, Mann-Filter, Bilstein и другие</h2>
         <p class="slide-text">Работаем только с надёжными производителями</p>
       </div>
@@ -62,16 +64,16 @@
     </div>
 
     <ul class="trust-list">
-      <li>Только Mercedes-Benz</li>
-      <li>Оригинал и аналоги</li>
-      <li>Быстрая доставка</li>
-      <li>Проверка совместимости</li>
+      <li><svg class="icon" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg>Только Mercedes-Benz</li>
+      <li><svg class="icon" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg>Оригинал и аналоги</li>
+      <li><svg class="icon" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg>Быстрая доставка</li>
+      <li><svg class="icon" viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg>Проверка совместимости</li>
     </ul>
   </section>
 
   <section class="garage-strip fade-in">
     <div class="garage-strip-header">
-      <span>🚗 Мой гараж</span>
+      <span><svg class="icon" viewBox="0 0 24 24"><path d="M3 13l1.5-4.5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.5L21 13v5a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H6v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5z"/><path d="M6 17a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" fill="currentColor" stroke="none"/><path d="M18 17a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" fill="currentColor" stroke="none"/></svg>Мой гараж</span>
       <button id="garage-manage-btn" class="garage-manage-btn" type="button">Управлять</button>
     </div>
     <div id="garage-cars" class="garage-cars"></div>
@@ -92,19 +94,19 @@
       <h3 class="section-title">Каталог</h3>
       <nav class="quick-filters" id="filters">
         <button class="filter-chip active" data-tab="all">Все</button>
-        <button class="filter-chip" data-tab="hit">🏆 Хиты</button>
-        <button class="filter-chip" data-tab="new">🆕 Новинки</button>
+        <button class="filter-chip" data-tab="hit">Хиты</button>
+        <button class="filter-chip" data-tab="new">Новинки</button>
       </nav>
     </div>
     <div id="active-filter-row" class="active-filter-row hidden">
       <span id="active-filter-label"></span>
-      <button id="clear-filter-btn" type="button">Сбросить ✕</button>
+      <button id="clear-filter-btn" type="button">Сбросить</button>
     </div>
     <main id="product-grid" class="product-grid"></main>
   </section>
 
   <footer class="footer">
-    <div class="footer-title">Помогаем найти нужную деталь 🔧</div>
+    <div class="footer-title">Помогаем найти нужную деталь</div>
     <p class="footer-text">Если не нашли деталь в каталоге — напишите нам, поможем подобрать вручную.</p>
     <div class="footer-links">
       <a href="https://t.me/fourmaticshop_bot" target="_blank" rel="noopener">Telegram</a>
@@ -119,7 +121,7 @@
     <div class="sheet">
       <div class="sheet-header">
         <h2>Корзина</h2>
-        <button id="close-cart" class="icon-btn" type="button">✕</button>
+        <button id="close-cart" class="icon-btn" type="button"><svg class="icon" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
       </div>
       <div id="cart-items" class="cart-items"></div>
       <div class="cart-footer">
@@ -133,7 +135,7 @@
     <div class="sheet">
       <div class="sheet-header">
         <h2>Избранное</h2>
-        <button id="close-favorites" class="icon-btn" type="button">✕</button>
+        <button id="close-favorites" class="icon-btn" type="button"><svg class="icon" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
       </div>
       <div id="favorites-items" class="cart-items"></div>
     </div>
@@ -143,7 +145,7 @@
     <div class="sheet">
       <div class="sheet-header">
         <h2>Мой гараж</h2>
-        <button id="close-garage" class="icon-btn" type="button">✕</button>
+        <button id="close-garage" class="icon-btn" type="button"><svg class="icon" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
       </div>
       <form id="garage-form" class="contact-form">
         <label>Модель автомобиля
@@ -159,7 +161,7 @@
     <div class="sheet">
       <div class="sheet-header">
         <h2>Оформление заказа</h2>
-        <button id="close-contact" class="icon-btn" type="button">✕</button>
+        <button id="close-contact" class="icon-btn" type="button"><svg class="icon" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
       </div>
       <form id="contact-form" class="contact-form">
         <label>Имя
@@ -216,7 +218,7 @@
     <div class="sheet product-sheet">
       <div class="sheet-header">
         <h2>О товаре</h2>
-        <button id="close-product" class="icon-btn" type="button">✕</button>
+        <button id="close-product" class="icon-btn" type="button"><svg class="icon" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
       </div>
       <div id="product-detail-body" class="product-detail-body"></div>
     </div>
