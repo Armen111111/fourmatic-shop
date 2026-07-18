@@ -7,7 +7,7 @@ from bot.config import Config
 # Bump this on every frontend deploy. Telegram's WebView caches a Mini App
 # by its exact URL, ignoring HTTP cache headers on the document itself —
 # changing this query param is what actually forces a fresh load.
-WEBAPP_BUILD = "8"
+WEBAPP_BUILD = "9"
 
 
 def register(config: Config) -> Router:
