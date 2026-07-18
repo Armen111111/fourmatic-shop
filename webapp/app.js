@@ -56,8 +56,24 @@ const CATEGORY_ICONS = {
   "Щётки стеклоочистителя": ICON_WIPER,
 };
 
+const CATALOG_GROUPS = [
+  { name: "Детали для ТО", categories: ["Масла и жидкости", "Фильтры"] },
+  { name: "Двигатель", categories: ["Двигатель", "Сцепление"] },
+  { name: "Система охлаждения", categories: ["Охлаждение", "Радиаторы", "Насосы системы охлаждения"] },
+  { name: "Ходовая часть", categories: ["Подвеска", "Пневмоподвеска", "Амортизаторы", "Пружины подвески", "Ролики и натяжители"] },
+  { name: "Рулевое управление", categories: ["Рулевое управление"] },
+  { name: "Тормозная система", categories: ["Тормозная система", "Тормозные диски", "Тормозные колодки"] },
+  { name: "Электрооборудование", categories: ["Электрика", "Датчики"] },
+  { name: "Кузов и оптика", categories: ["Оптика", "Щётки стеклоочистителя"] },
+];
+
+const CHEVRON_DOWN = '<svg class="icon catalog-tree-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>';
+const CHEVRON_RIGHT = '<svg class="icon" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>';
+
 const productGridEl = document.getElementById("product-grid");
 const loadMoreBtn = document.getElementById("load-more-btn");
+const catalogTreeEl = document.getElementById("catalog-tree");
+const catalogListTitleEl = document.getElementById("catalog-list-title");
 const tabHomeEl = document.getElementById("tab-home");
 const tabCatalogEl = document.getElementById("tab-catalog");
 const bottomNavItems = document.querySelectorAll(".bottom-nav-item");
@@ -168,6 +184,7 @@ async function loadInitial() {
 
   renderCategoryGrid();
   renderBrandGrid();
+  renderCatalogTree();
   renderGarage();
   renderProducts();
   updateCartBadge();
@@ -308,7 +325,9 @@ function renderCategoryGrid() {
       syncFilterChips();
       renderCategoryGrid();
       renderBrandGrid();
+      renderCatalogTree();
       renderProducts();
+      catalogListTitleEl.textContent = state.category || "Все товары";
       switchTab("catalog");
     });
   });
@@ -336,8 +355,81 @@ function renderBrandGrid() {
       syncFilterChips();
       renderCategoryGrid();
       renderBrandGrid();
+      renderCatalogTree();
       renderProducts();
+      catalogListTitleEl.textContent = state.brand || "Все товары";
       switchTab("catalog");
+    });
+  });
+}
+
+function selectCategoryFromTree(cat) {
+  state.category = cat;
+  state.brand = null;
+  state.tab = "all";
+  syncFilterChips();
+  renderCategoryGrid();
+  renderBrandGrid();
+  renderProducts();
+  catalogListTitleEl.textContent = cat;
+  document.querySelector(".catalog-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function renderCatalogTree() {
+  const counts = categoryCounts();
+  const groups = CATALOG_GROUPS
+    .map((group) => ({
+      name: group.name,
+      categories: group.categories.filter((cat) => counts[cat]),
+    }))
+    .filter((group) => group.categories.length);
+
+  const knownCategories = new Set(CATALOG_GROUPS.flatMap((g) => g.categories));
+  const other = Object.keys(counts)
+    .filter((cat) => !knownCategories.has(cat))
+    .sort();
+  if (other.length) groups.push({ name: "Дополнительное оборудование", categories: other });
+
+  catalogTreeEl.innerHTML = groups
+    .map((group, gi) => {
+      const total = group.categories.reduce((sum, cat) => sum + counts[cat], 0);
+      return `
+      <div class="catalog-tree-group" data-group-index="${gi}">
+        <button class="catalog-tree-group-head" type="button">
+          ${CHEVRON_DOWN}
+          <span class="catalog-tree-group-name">${escapeHtml(group.name)}</span>
+          <span class="catalog-tree-group-count">${total}</span>
+        </button>
+        <div class="catalog-tree-items">
+          ${group.categories
+            .map(
+              (cat) => `
+            <button class="catalog-tree-item${state.category === cat ? " active" : ""}" data-category="${escapeAttr(cat)}" type="button">
+              <span>${escapeHtml(cat)}</span>
+              <span class="catalog-tree-item-right">
+                <span class="catalog-tree-item-count">${counts[cat]}</span>
+                ${CHEVRON_RIGHT}
+              </span>
+            </button>`
+            )
+            .join("")}
+        </div>
+      </div>`;
+    })
+    .join("");
+
+  catalogTreeEl.querySelectorAll(".catalog-tree-group").forEach((groupEl) => {
+    groupEl.querySelector(".catalog-tree-group-head").addEventListener("click", () => {
+      groupEl.classList.toggle("expanded");
+    });
+  });
+
+  catalogTreeEl.querySelectorAll(".catalog-tree-item").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      selectCategoryFromTree(btn.dataset.category);
+      catalogTreeEl.querySelectorAll(".catalog-tree-item").forEach((el) => el.classList.remove("active"));
+      btn.classList.add("active");
     });
   });
 }
@@ -363,7 +455,9 @@ clearFilterBtn.addEventListener("click", () => {
   state.brand = null;
   renderCategoryGrid();
   renderBrandGrid();
+  renderCatalogTree();
   renderProducts();
+  catalogListTitleEl.textContent = "Все товары";
 });
 
 filtersEl.addEventListener("click", (event) => {
@@ -467,7 +561,9 @@ vinSearchBtn.addEventListener("click", () => {
   syncFilterChips();
   renderCategoryGrid();
   renderBrandGrid();
+  renderCatalogTree();
   renderProducts();
+  catalogListTitleEl.textContent = "Результаты поиска";
   switchTab("catalog");
 });
 
@@ -586,7 +682,9 @@ function renderGarage() {
       state.brand = null;
       renderCategoryGrid();
       renderBrandGrid();
+      renderCatalogTree();
       renderProducts();
+      catalogListTitleEl.textContent = "Результаты поиска";
       switchTab("catalog");
     });
   });

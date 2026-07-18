@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=9" />
+  <link rel="stylesheet" href="style.css?v=10" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -35,6 +35,17 @@
   <div id="tab-home" class="tab-panel">
 
   <section class="intro fade-in">
+    <div class="intro-dots" aria-hidden="true"></div>
+    <svg class="intro-racecar" viewBox="0 0 400 100" aria-hidden="true">
+      <path d="M20 60 C30 52 60 50 90 52 L150 50 C180 48 220 48 250 50 L320 52 C350 53 375 56 385 60 L385 66 L320 64 C290 63 200 63 150 64 L90 65 C60 64 35 63 20 62 Z" />
+      <path d="M150 50 Q160 39 176 41 Q188 43 190 50" />
+      <path d="M161 41 Q176 26 197 29 Q206 31 205 41" />
+      <path d="M10 65 L46 65 L46 70 L10 71 Z" />
+      <path d="M368 30 L393 27 L393 40 L368 42 Z" />
+      <path d="M378 42 L378 55" />
+      <circle cx="76" cy="71" r="15" />
+      <circle cx="333" cy="71" r="17" />
+    </svg>
     <span class="intro-eyebrow">Mercedes&#8209;Benz · Официальный подбор запчастей</span>
     <h2 class="intro-title">Подбор оригинальных деталей и&nbsp;качественных аналогов</h2>
     <p class="intro-subtitle">По VIN и OEM-номеру, с проверкой совместимости с вашим автомобилем.</p>
@@ -110,9 +121,14 @@
   </div>
 
   <div id="tab-catalog" class="tab-panel hidden">
+  <section class="catalog-tree-section">
+    <h3 class="section-title">Каталог по системам</h3>
+    <div id="catalog-tree" class="catalog-tree"></div>
+  </section>
+
   <section class="catalog-section">
     <div class="catalog-section-head">
-      <h3 class="section-title">Каталог</h3>
+      <h3 class="section-title" id="catalog-list-title">Все товары</h3>
       <nav class="quick-filters" id="filters">
         <button class="filter-chip active" data-tab="all">Все</button>
         <button class="filter-chip" data-tab="hit">Хиты</button>
@@ -263,6 +279,6 @@
 
   <div id="toast" class="toast hidden"></div>
 
-  <script src="app.js?v=9"></script>
+  <script src="app.js?v=10"></script>
 </body>
 </html>
