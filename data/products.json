@@ -616,8 +616,8 @@
   },
   {
     "id": "absel-ms-342-035",
-    "name": "Амортизатор подвески задний (электр. регул.)",
-    "brand": "ABSEL ADVANT",
+    "name": "Амортизатор подвески задний (электр. регул.) ADVANT",
+    "brand": "ABSEL",
     "category": "Амортизаторы",
     "oem": "A1643200731",
     "compatible_models": [
@@ -635,8 +635,8 @@
   },
   {
     "id": "absel-ms-342-038",
-    "name": "Амортизатор подвески задний (электр. регул.)",
-    "brand": "ABSEL ADVANT",
+    "name": "Амортизатор подвески задний (электр. регул.) ADVANT",
+    "brand": "ABSEL",
     "category": "Амортизаторы",
     "oem": "A1663200130",
     "compatible_models": [
@@ -654,8 +654,8 @@
   },
   {
     "id": "absel-ms-342-039",
-    "name": "Амортизатор подвески задний (электр. регул.)",
-    "brand": "ABSEL ADVANT",
+    "name": "Амортизатор подвески задний (электр. регул.) ADVANT",
+    "brand": "ABSEL",
     "category": "Амортизаторы",
     "oem": "A2513200931",
     "compatible_models": [
@@ -673,8 +673,8 @@
   },
   {
     "id": "absel-ms-342-040",
-    "name": "Амортизатор подвески задний (электр. регул.)",
-    "brand": "ABSEL ADVANT",
+    "name": "Амортизатор подвески задний (электр. регул.) ADVANT",
+    "brand": "ABSEL",
     "category": "Амортизаторы",
     "oem": "A2113200631",
     "compatible_models": [
@@ -692,8 +692,8 @@
   },
   {
     "id": "absel-ms-342-098",
-    "name": "Амортизатор подвески задний (без электр. регул.)",
-    "brand": "ABSEL PERFECT",
+    "name": "Амортизатор подвески задний (без электр. регул.) PERFECT",
+    "brand": "ABSEL",
     "category": "Амортизаторы",
     "oem": "A1643200631",
     "compatible_models": [
@@ -712,8 +712,8 @@
   },
   {
     "id": "absel-ms-342-100",
-    "name": "Амортизатор подвески задний (без электр. регул.)",
-    "brand": "ABSEL PERFECT",
+    "name": "Амортизатор подвески задний (без электр. регул.) PERFECT",
+    "brand": "ABSEL",
     "category": "Амортизаторы",
     "oem": "A1663200030",
     "compatible_models": [
@@ -731,8 +731,8 @@
   },
   {
     "id": "absel-ms-342-101",
-    "name": "Амортизатор подвески передний (без электр. регул.)",
-    "brand": "ABSEL PERFECT",
+    "name": "Амортизатор подвески передний (без электр. регул.) PERFECT",
+    "brand": "ABSEL",
     "category": "Амортизаторы",
     "oem": "A2513200730",
     "compatible_models": [
@@ -750,8 +750,8 @@
   },
   {
     "id": "absel-ms-342-121",
-    "name": "Амортизатор подвески газовый задний",
-    "brand": "ABSEL ADAPT",
+    "name": "Амортизатор подвески газовый задний ADAPT",
+    "brand": "ABSEL",
     "category": "Амортизаторы",
     "oem": "A6383260700",
     "compatible_models": [
@@ -769,8 +769,8 @@
   },
   {
     "id": "absel-ms-342-126",
-    "name": "Амортизатор подвески газовый задний",
-    "brand": "ABSEL ADAPT",
+    "name": "Амортизатор подвески газовый задний ADAPT",
+    "brand": "ABSEL",
     "category": "Амортизаторы",
     "oem": "A6393260300",
     "compatible_models": [
@@ -788,8 +788,8 @@
   },
   {
     "id": "absel-ms-342-129",
-    "name": "Амортизатор подвески газовый задний",
-    "brand": "ABSEL ADAPT",
+    "name": "Амортизатор подвески газовый задний ADAPT",
+    "brand": "ABSEL",
     "category": "Амортизаторы",
     "oem": "A2043201231",
     "compatible_models": [
@@ -808,8 +808,8 @@
   },
   {
     "id": "absel-ms-342-131",
-    "name": "Амортизатор подвески газовый задний",
-    "brand": "ABSEL ADAPT",
+    "name": "Амортизатор подвески газовый задний ADAPT",
+    "brand": "ABSEL",
     "category": "Амортизаторы",
     "oem": "A9063200031",
     "compatible_models": [
@@ -827,8 +827,8 @@
   },
   {
     "id": "absel-ms-342-149",
-    "name": "Амортизатор подвески газовый задний",
-    "brand": "ABSEL ADAPT",
+    "name": "Амортизатор подвески газовый задний ADAPT",
+    "brand": "ABSEL",
     "category": "Амортизаторы",
     "oem": "A9013200031",
     "compatible_models": [
@@ -847,8 +847,8 @@
   },
   {
     "id": "absel-ms-342-171",
-    "name": "Амортизатор подвески газовый передний",
-    "brand": "ABSEL ADAPT",
+    "name": "Амортизатор подвески газовый передний ADAPT",
+    "brand": "ABSEL",
     "category": "Амортизаторы",
     "oem": "A1693200130",
     "compatible_models": [
@@ -866,8 +866,8 @@
   },
   {
     "id": "absel-ms-342-188",
-    "name": "Амортизатор подвески газовый передний",
-    "brand": "ABSEL ADAPT",
+    "name": "Амортизатор подвески газовый передний ADAPT",
+    "brand": "ABSEL",
     "category": "Амортизаторы",
     "oem": "A6393206013",
     "compatible_models": [
@@ -885,8 +885,8 @@
   },
   {
     "id": "absel-ms-342-193",
-    "name": "Амортизатор подвески газовый передний",
-    "brand": "ABSEL ADAPT",
+    "name": "Амортизатор подвески газовый передний ADAPT",
+    "brand": "ABSEL",
     "category": "Амортизаторы",
     "oem": "A2043200630",
     "compatible_models": [
