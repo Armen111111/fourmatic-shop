@@ -84,7 +84,7 @@ body {
 
 body {
   margin: 0;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   color: var(--text);
@@ -214,13 +214,15 @@ svg {
 
 .fade-in {
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out);
+  transform: translateY(28px);
+  filter: blur(6px);
+  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out), filter 0.8s var(--ease-out);
 }
 
 .fade-in.in-view {
   opacity: 1;
   transform: translateY(0);
+  filter: blur(0);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -241,7 +243,7 @@ svg {
 
 .poster-hero {
   position: relative;
-  margin: 0 0 16px;
+  margin: 20px 0 16px;
   padding: 56px 24px 40px;
   min-height: 340px;
   overflow: hidden;
@@ -269,7 +271,7 @@ svg {
   width: 70%;
   height: 180%;
   background: linear-gradient(100deg, transparent 40%, rgba(255, 255, 255, 0.05) 48%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 52%, transparent 60%);
-  animation: sweep-move 7s ease-in-out infinite;
+  animation: sweep-move 7s cubic-bezier(0.45, 0, 0.55, 1) infinite;
   pointer-events: none;
 }
 
@@ -284,13 +286,17 @@ svg {
 }
 
 .poster-eyebrow {
-  display: block;
-  font-size: 11px;
+  display: inline-block;
+  font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
-  margin-bottom: 14px;
+  margin-bottom: 18px;
+  padding: 7px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: var(--glass-strong);
   opacity: 0;
   animation: fade-up 0.6s var(--ease-out) forwards;
   animation-delay: 0.1s;
@@ -347,7 +353,7 @@ svg {
   margin: 28px 0 -6px -6%;
   opacity: 0;
   transform: translateX(-14%);
-  animation: car-drive-in 1s cubic-bezier(0.22, 1, 0.36, 1) forwards, car-idle 4s ease-in-out infinite 1.4s;
+  animation: car-drive-in 1s cubic-bezier(0.22, 1, 0.36, 1) forwards, car-idle 4s cubic-bezier(0.45, 0, 0.55, 1) infinite 1.4s;
   animation-delay: 0.55s, 1.4s;
 }
 
@@ -493,14 +499,17 @@ svg {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: calc(14px + var(--sa-top)) 16px 14px;
-  background: rgba(11, 11, 11, 0.82);
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  padding: 12px 16px;
+  margin: calc(10px + var(--sa-top)) 12px 0;
+  background: rgba(21, 21, 21, 0.7);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
   position: sticky;
-  top: 0;
+  top: calc(8px + var(--sa-top));
   z-index: 20;
-  border-bottom: 1px solid var(--line);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 12px 32px -16px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .brand {
@@ -604,10 +613,11 @@ svg {
 
 .hero {
   margin: 8px 16px 16px;
-  padding: 28px 20px;
+  padding: 32px 22px;
   border-radius: var(--radius-lg);
   background: linear-gradient(165deg, var(--card), var(--bg-elevated));
   border: 1px solid var(--line);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 20px 44px -26px rgba(0, 0, 0, 0.9);
   text-align: center;
 }
 
@@ -659,12 +669,35 @@ svg {
   border: none;
   background: var(--accent);
   color: var(--on-accent);
-  padding: 15px;
-  border-radius: var(--radius-md);
+  padding: 6px 8px 6px 22px;
+  border-radius: var(--radius-pill);
   font-size: 14px;
   font-weight: 600;
   letter-spacing: -0.01em;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   transition: transform var(--dur-fast) var(--ease-spring), opacity var(--dur-fast) var(--ease-out);
+}
+
+.vin-search-btn::after {
+  content: "";
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(11, 11, 11, 0.12);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b0b0b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14M13 6l6 6-6 6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 18px;
+  flex-shrink: 0;
+  transition: transform var(--dur-base) var(--ease-spring);
+}
+
+.vin-search-btn:hover::after {
+  transform: translateX(2px);
 }
 
 .vin-search-btn:hover {
@@ -816,7 +849,7 @@ svg {
 .categories-section,
 .brands-section,
 .catalog-section {
-  margin-bottom: 26px;
+  margin-bottom: 40px;
 }
 
 .category-grid {
@@ -836,7 +869,8 @@ svg {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  transition: transform var(--dur-fast) var(--ease-spring), border-color var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 10px 22px -18px rgba(0, 0, 0, 0.8);
+  transition: transform var(--dur-fast) var(--ease-spring), border-color var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
 }
 
 .category-card:hover {
@@ -980,12 +1014,13 @@ svg {
 .product-card {
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   position: relative;
   cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 14px 30px -22px rgba(0, 0, 0, 0.8);
   transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out);
   opacity: 0;
   transform: translateY(16px) scale(0.98);
@@ -1003,8 +1038,8 @@ svg {
 .product-card:hover {
   border-color: var(--line-accent);
   background: var(--card-hover);
-  box-shadow: 0 16px 40px -20px rgba(0, 0, 0, 0.6);
-  transform: translateY(-2px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 20px 44px -18px rgba(0, 0, 0, 0.7);
+  transform: translateY(-3px);
 }
 
 .product-card:active {
@@ -1170,7 +1205,7 @@ svg {
 .skeleton-block {
   background: linear-gradient(90deg, var(--bg-elevated) 25%, var(--card-hover) 50%, var(--bg-elevated) 75%);
   background-size: 200% 100%;
-  animation: skeleton-shine 1.4s ease-in-out infinite;
+  animation: skeleton-shine 1.4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
 
 .skeleton-card .skeleton-block:first-child {
@@ -1435,7 +1470,7 @@ svg {
   background: var(--accent);
   color: var(--on-accent);
   padding: 15px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
   font-size: 15px;
   font-weight: 600;
   letter-spacing: -0.01em;

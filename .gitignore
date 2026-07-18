@@ -3,3 +3,9 @@
 __pycache__/
 *.pyc
 data/orders.json
+
+# AI coding-agent skill installs (local tooling, not part of the app)
+.agents/
+.claude/
+.codex/
+skills-lock.json
