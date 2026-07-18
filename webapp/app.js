@@ -92,6 +92,7 @@ function showToast(message) {
 }
 
 function formatPrice(value) {
+  if (value === null || value === undefined) return "Узнать цену";
   return `${value.toLocaleString("ru-RU")} ₽`;
 }
 
@@ -337,8 +338,8 @@ function filteredProducts() {
 
 function productCardHtml(product, index) {
   const isFav = state.favorites.includes(product.id);
-  const stockClass = product.in_stock ? "in" : "out";
-  const stockLabel = product.in_stock ? "В наличии" : "Под заказ";
+  const stockClass = product.price_on_request ? "out" : product.in_stock ? "in" : "out";
+  const stockLabel = product.price_on_request ? "Под запрос" : product.in_stock ? "В наличии" : "Под заказ";
   const badge = product.is_hit ? "🏆 Хит" : product.is_new ? "🆕 Новинка" : "";
   return `
     <article class="product-card" data-id="${escapeAttr(product.id)}" style="--card-index:${index % 12}">
@@ -706,13 +707,13 @@ function renderProductDetail(product) {
     <div class="detail-price-row">
       <div>
         <div class="detail-price">${formatPrice(product.price)}</div>
-        <div class="detail-availability">${product.in_stock ? "В наличии" : "Под заказ"} · доставка ${escapeHtml(product.delivery_days || "—")} дн.</div>
+        <div class="detail-availability">${product.price_on_request ? "Цена уточняется у поставщика" : product.in_stock ? "В наличии" : "Под заказ"} · доставка ${escapeHtml(product.delivery_days || "—")} дн.</div>
       </div>
     </div>
     <div class="detail-actions">
       <button class="favorite-btn-detail${isFav ? " active" : ""}" id="detail-fav-btn" type="button">${isFav ? "♥" : "♡"}</button>
-      <button class="quick-order-btn" id="detail-quick-order-btn" type="button" ${product.in_stock ? "" : "disabled"}>Купить в 1 клик</button>
-      <button class="add-btn" id="detail-add-btn" type="button" ${product.in_stock ? "" : "disabled"}>${inCart > 0 ? `В корзине: ${inCart}` : "В корзину"}</button>
+      <button class="quick-order-btn" id="detail-quick-order-btn" type="button" ${product.in_stock && !product.price_on_request ? "" : "disabled"}>Купить в 1 клик</button>
+      <button class="add-btn" id="detail-add-btn" type="button" ${product.in_stock && !product.price_on_request ? "" : "disabled"}>${inCart > 0 ? `В корзине: ${inCart}` : "В корзину"}</button>
     </div>
   `;
 
