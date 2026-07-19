@@ -4,6 +4,12 @@ __pycache__/
 *.pyc
 data/orders.json
 
+# Next.js frontend build artifacts / deps (rebuilt on deploy)
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/next-env.d.ts
+
 # AI coding-agent skill installs (local tooling, not part of the app)
 .agents/
 .claude/

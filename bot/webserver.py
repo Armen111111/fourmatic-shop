@@ -9,7 +9,7 @@ from bot.services import catalog
 from bot.services import orders as orders_service
 from bot.services.webapp_auth import validate_init_data
 
-WEBAPP_DIR = Path(__file__).resolve().parent.parent / "webapp"
+WEBAPP_DIR = Path(__file__).resolve().parent.parent / "frontend" / "out"
 
 
 def create_app(bot: Bot, config: Config) -> web.Application:
