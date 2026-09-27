@@ -44,7 +44,7 @@
           "icon": "washer"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -93,7 +93,7 @@
           "icon": "washer"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -142,7 +142,7 @@
           "icon": "washer"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -191,7 +191,7 @@
           "icon": "washer"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -240,7 +240,7 @@
           "icon": "washer"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -289,7 +289,7 @@
           "icon": "washer"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -338,7 +338,7 @@
           "icon": "washer"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -387,7 +387,7 @@
           "icon": "washer"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -436,7 +436,7 @@
           "icon": "washer"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -485,7 +485,7 @@
           "icon": "washer"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -534,7 +534,7 @@
           "icon": "washer"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -583,7 +583,7 @@
           "icon": "washer"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -636,12 +636,66 @@
           "buy_price": 387
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
       ],
       "price": "4 190 ₽"
+    },
+    {
+      "id": "to-14-jetta",
+      "sku": "TO-14",
+      "kind": "to",
+      "type": "ТО-КИТ",
+      "car": "VW Jetta",
+      "job": "Всё для планового ТО",
+      "engine": "уточнить по VIN",
+      "drive": "—",
+      "title": "ТО-кит VW Jetta: масло и фильтры",
+      "priority": "высокий",
+      "price": "5 890 ₽",
+      "peek": [
+        "oil",
+        "oil_filter",
+        "air_filter"
+      ],
+      "items": [
+        {
+          "name": "Масло TEBOIL 5W-40",
+          "qty": "4 л",
+          "icon": "oil",
+          "brand": "TEBOIL",
+          "buy_price": 3525.84,
+          "listing_name": "Масло TEBOIL Diamond Multi 5W-40, 4 л — синтетика с допуском VW 502 00 / 505 00"
+        },
+        {
+          "name": "Фильтр масляный",
+          "qty": "",
+          "icon": "oil_filter",
+          "brand": "AMD",
+          "buy_price": 308.1
+        },
+        {
+          "name": "Фильтр воздушный",
+          "qty": "",
+          "icon": "air_filter",
+          "brand": "BRAVE",
+          "buy_price": 311.0
+        },
+        {
+          "name": "Фильтр салонный",
+          "qty": "",
+          "icon": "cabin_filter",
+          "brand": "BRAVE",
+          "buy_price": 317.0
+        },
+        {
+          "name": "Карта ремонта",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
     },
     {
       "id": "grm-01-solaris-2010",
@@ -686,7 +740,7 @@
           "icon": "sealant"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -735,7 +789,7 @@
           "icon": "sealant"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -784,7 +838,7 @@
           "icon": "sealant"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -833,7 +887,7 @@
           "icon": "sealant"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -882,7 +936,7 @@
           "icon": "sealant"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -915,7 +969,7 @@
           "icon": "roller"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -964,7 +1018,7 @@
           "icon": "sealant"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -1013,7 +1067,7 @@
           "icon": "sealant"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -1062,7 +1116,7 @@
           "icon": "sealant"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -1111,7 +1165,7 @@
           "icon": "sealant"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
@@ -1149,7 +1203,7 @@
           "icon": "belt"
         },
         {
-          "name": "Карта ремонта с QR-видео",
+          "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }

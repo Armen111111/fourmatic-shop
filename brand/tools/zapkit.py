@@ -202,14 +202,11 @@ def icon(name):
         return (f'<path fill="{COPPER}" fill-rule="evenodd" d="{circle_path(60, 60, 30)} {circle_path(60, 60, 13)}"/>'
                 f'<circle cx="60" cy="60" r="22" fill="none" stroke="#A9612B" stroke-width="2"/>')
     if name == "card":
-        qr = "".join(f'<rect x="{62 + (i % 3) * 7}" y="{70 + (i // 3) * 7}" width="5" height="5" fill="{I}"/>'
-                     for i in range(9) if i not in (4,))
         return (f'<rect x="30" y="18" width="60" height="84" rx="6" fill="{PAPER}" stroke="{I}" stroke-width="3"/>'
                 f'<rect x="30" y="18" width="60" height="14" rx="6" fill="{Y}"/>'
                 f'<rect x="30" y="26" width="60" height="6" fill="{Y}"/>'
-                + "".join(f'<rect x="38" y="{40 + i * 9}" width="5" height="5" fill="none" stroke="{I}" stroke-width="1.6"/>'
-                          f'<rect x="47" y="{41 + i * 9}" width="34" height="3" fill="{SD}"/>' for i in range(3))
-                + qr)
+                + "".join(f'<rect x="38" y="{42 + i * 13}" width="6" height="6" fill="none" stroke="{I}" stroke-width="1.8"/>'
+                          f'<rect x="49" y="{43.5 + i * 13}" width="32" height="3" fill="{SD}"/>' for i in range(4)))
     if name == "disc":
         holes = "".join(f'<circle cx="{60 + 14 * math.cos(math.radians(a)):.1f}" cy="{60 + 14 * math.sin(math.radians(a)):.1f}" r="3" fill="{I}"/>'
                         for a in range(-90, 270, 72))
