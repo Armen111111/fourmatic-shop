@@ -342,7 +342,7 @@ def search_screen(kit):
 
 
 # Витрина макета и условные цены (только для картинки; реальные цены — в avito/zapkit-zakupka.xlsx)
-MOCKUP_KITS = {"to-01-solaris-2010": "4 690 ₽", "grm-12-coolray": "8 990 ₽",
+MOCKUP_KITS = {"to-01-solaris-2010": "4 690 ₽", "grm-12-coolray": "9 990 ₽",
                "to-07-jolion": "6 490 ₽", "grm-06-polo-cwva": "5 990 ₽"}
 
 
