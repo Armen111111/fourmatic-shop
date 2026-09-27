@@ -1,0 +1,68 @@
+{
+  "_comment": "Составы китов для фотокарточек. icon — одна из иконок в brand/tools/zapkit.py. Цены условные, для макета.",
+  "kits": [
+    {
+      "id": "to-solaris",
+      "type": "ТО-КИТ",
+      "car": "Hyundai Solaris 1.6",
+      "job": "Всё для планового ТО",
+      "title": "ТО-кит Hyundai Solaris 1.6: масло и 3 фильтра",
+      "example_price": "4 690 ₽",
+      "peek": ["oil", "oil_filter", "air_filter"],
+      "items": [
+        {"name": "Масло моторное", "qty": "4 л", "icon": "oil"},
+        {"name": "Фильтр масляный", "qty": "", "icon": "oil_filter"},
+        {"name": "Фильтр воздушный", "qty": "", "icon": "air_filter"},
+        {"name": "Фильтр салонный", "qty": "", "icon": "cabin_filter"},
+        {"name": "Шайба сливной пробки", "qty": "", "icon": "washer"},
+        {"name": "Карта ремонта с QR-видео", "qty": "", "icon": "card"}
+      ]
+    },
+    {
+      "id": "brake-rio",
+      "type": "ТОРМОЗ-КИТ",
+      "car": "Kia Rio 4",
+      "job": "Замена передних дисков и колодок",
+      "title": "Тормоз-кит Kia Rio 4: диски и колодки перед",
+      "example_price": "7 990 ₽",
+      "peek": ["disc", "pads", "spray"],
+      "items": [
+        {"name": "Диски тормозные передние", "qty": "×2", "icon": "disc"},
+        {"name": "Колодки передние", "qty": "", "icon": "pads"},
+        {"name": "Смазка направляющих", "qty": "", "icon": "grease"},
+        {"name": "Очиститель тормозов", "qty": "", "icon": "spray"},
+        {"name": "Карта ремонта с QR-видео", "qty": "", "icon": "card"}
+      ]
+    },
+    {
+      "id": "stab-polo",
+      "type": "СТАБИЛИЗАТОР-КИТ",
+      "car": "VW Polo седан",
+      "job": "Замена стоек и втулок стабилизатора",
+      "title": "Стабилизатор-кит VW Polo седан: стойки, втулки",
+      "example_price": "3 890 ₽",
+      "peek": ["link", "bushing", "nut"],
+      "items": [
+        {"name": "Стойки стабилизатора", "qty": "×2", "icon": "link"},
+        {"name": "Втулки стабилизатора", "qty": "×2", "icon": "bushing"},
+        {"name": "Гайки самоконтрящиеся", "qty": "×4", "icon": "nut"},
+        {"name": "Карта ремонта с QR-видео", "qty": "", "icon": "card"}
+      ]
+    },
+    {
+      "id": "winter-creta",
+      "type": "ЗИМА-КИТ",
+      "car": "Hyundai Creta 1.6",
+      "job": "Подготовка к зиме",
+      "title": "Зима-кит Hyundai Creta 1.6: щётки, лампы, свечи",
+      "example_price": "3 490 ₽",
+      "peek": ["wiper", "spark_plug", "bulb"],
+      "items": [
+        {"name": "Щётки стеклоочистителя", "qty": "×2", "icon": "wiper"},
+        {"name": "Лампы ближнего света", "qty": "×2", "icon": "bulb"},
+        {"name": "Свечи зажигания", "qty": "×4", "icon": "spark_plug"},
+        {"name": "Карта ремонта с QR-видео", "qty": "", "icon": "card"}
+      ]
+    }
+  ]
+}

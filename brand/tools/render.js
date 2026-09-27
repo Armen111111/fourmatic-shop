@@ -1,34 +1,31 @@
-// Рендер SVG из brand/svg в PNG (brand/png) через Playwright/Chromium.
-// Запуск: NODE_PATH=$(npm root -g) node brand/tools/render.js
+// Рендер всех SVG из папки в PNG через Playwright/Chromium.
+// Размер PNG берётся из атрибутов width/height корневого <svg>.
+// Запуск: NODE_PATH=$(npm root -g) node brand/tools/render.js <папка_svg> <папка_png>
 const path = require("path");
 const fs = require("fs");
 const { chromium } = require("playwright");
 
-const root = path.resolve(__dirname, "..");
-const jobs = [
-  // [svg, png, ширина, высота]
-  ["zapkit-avatar.svg", "zapkit-avatar-1024.png", 1024, 1024],
-  ["zapkit-avatar-dark.svg", "zapkit-avatar-dark-1024.png", 1024, 1024],
-  ["zapkit-mark.svg", "zapkit-mark-512.png", 512, 512],
-  ["zapkit-logo-dark.svg", "zapkit-logo-dark.png", 1340, 268],
-  ["zapkit-logo-light.svg", "zapkit-logo-light.png", 1340, 268],
-  ["zapkit-logo-on-yellow.svg", "zapkit-logo-on-yellow.png", 1340, 268],
-  ["zapkit-lockup-dark.svg", "zapkit-lockup-dark.png", 1340, 372],
-  ["zapkit-lockup-light.svg", "zapkit-lockup-light.png", 1340, 372],
-  ["avito-cover.svg", "avito-cover-1920x640.png", 1920, 640],
-  ["kit-card-example.svg", "kit-card-example-1200x900.png", 1200, 900],
-];
+const [srcDir, outDir] = process.argv.slice(2).map((p) => path.resolve(p));
+if (!srcDir || !outDir) {
+  console.error("usage: node render.js <svg_dir> <png_dir>");
+  process.exit(1);
+}
 
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage();
-  fs.mkdirSync(path.join(root, "png"), { recursive: true });
-  for (const [src, out, w, h] of jobs) {
-    const svg = fs.readFileSync(path.join(root, "svg", src), "utf8");
-    await page.setViewportSize({ width: w, height: h });
+  fs.mkdirSync(outDir, { recursive: true });
+  for (const file of fs.readdirSync(srcDir).filter((f) => f.endsWith(".svg")).sort()) {
+    const svg = fs.readFileSync(path.join(srcDir, file), "utf8");
+    const root = svg.match(/<svg[^>]*>/)[0];
+    const w = +root.match(/ width="(\d+(?:\.\d+)?)"/)[1];
+    const h = +root.match(/ height="(\d+(?:\.\d+)?)"/)[1];
+    const W = Math.round(w), H = Math.round(h);
+    await page.setViewportSize({ width: W, height: H });
     await page.setContent(`<html><body style="margin:0">${svg}</body></html>`);
-    await page.screenshot({ path: path.join(root, "png", out), omitBackground: true, clip: { x: 0, y: 0, width: w, height: h } });
-    console.log("rendered", out);
+    const out = path.join(outDir, file.replace(/\.svg$/, ".png"));
+    await page.screenshot({ path: out, omitBackground: true, clip: { x: 0, y: 0, width: W, height: H } });
+    console.log("rendered", path.relative(process.cwd(), out), `${W}×${H}`);
   }
   await browser.close();
 })();
