@@ -65,7 +65,9 @@ Build Command `pip install -r requirements.txt`, Start Command `python -m bot.ma
 
 Начать отсюда: **`docs/avito/step-by-step.md`**, пошаговый план простыми словами.
 
-- `docs/avito/listings.md`: готовые тексты объявлений и описание магазина.
+- `docs/avito/assortment.md`: стартовый ассортимент (Сочи): машины, моторы, ТО- и ГРМ-киты, порядок выкладки.
+- `avito/zapkit-zakupka.xlsx`: таблица закупки: составы китов, цены 9 поставщиков, автоматическая цена на Авито.
+- `docs/avito/listings.md`: все заголовки, шаблоны описаний и описание магазина.
 - `docs/avito/templates.md`: скрипты для чата, карта ремонта, таблицы.
 - `docs/avito/launch-plan.md`: анализ рынка, план на 90 дней, экономика, где взять деньги.
 - `brand/`: логотип ZAPKIT, аватар, обложки, брендбук.

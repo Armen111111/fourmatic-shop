@@ -1,67 +1,1104 @@
 {
-  "_comment": "Составы китов для фотокарточек. icon — одна из иконок в brand/tools/zapkit.py. Цены условные, для макета.",
+  "_comment": "Стартовый ассортимент ZAPKIT (Сочи). items — что показываем на фото. Закупочные позиции и цены — в avito/zapkit-zakupka.xlsx.",
   "kits": [
     {
-      "id": "to-solaris",
+      "id": "to-01-solaris-2010",
+      "sku": "TO-01",
+      "kind": "to",
       "type": "ТО-КИТ",
-      "car": "Hyundai Solaris 1.6",
-      "job": "Всё для планового ТО",
-      "title": "ТО-кит Hyundai Solaris 1.6: масло и 3 фильтра",
-      "example_price": "4 690 ₽",
-      "peek": ["oil", "oil_filter", "air_filter"],
+      "car": "Hyundai Solaris 2010–2017",
+      "job": "Моторы 1.4 / 1.6 · всё для планового ТО",
+      "engine": "G4FA / G4FC",
+      "drive": "цепь",
+      "title": "ТО-кит Hyundai Solaris 2010–2017: масло и фильтры",
+      "priority": "высокий",
+      "peek": [
+        "oil",
+        "oil_filter",
+        "air_filter"
+      ],
       "items": [
-        {"name": "Масло моторное", "qty": "4 л", "icon": "oil"},
-        {"name": "Фильтр масляный", "qty": "", "icon": "oil_filter"},
-        {"name": "Фильтр воздушный", "qty": "", "icon": "air_filter"},
-        {"name": "Фильтр салонный", "qty": "", "icon": "cabin_filter"},
-        {"name": "Шайба сливной пробки", "qty": "", "icon": "washer"},
-        {"name": "Карта ремонта с QR-видео", "qty": "", "icon": "card"}
+        {
+          "name": "Масло моторное",
+          "qty": "4 л",
+          "icon": "oil"
+        },
+        {
+          "name": "Фильтр масляный",
+          "qty": "",
+          "icon": "oil_filter"
+        },
+        {
+          "name": "Фильтр воздушный",
+          "qty": "",
+          "icon": "air_filter"
+        },
+        {
+          "name": "Фильтр салонный",
+          "qty": "",
+          "icon": "cabin_filter"
+        },
+        {
+          "name": "Шайба сливной пробки",
+          "qty": "",
+          "icon": "washer"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
       ]
     },
     {
-      "id": "brake-rio",
-      "type": "ТОРМОЗ-КИТ",
-      "car": "Kia Rio 4",
-      "job": "Замена передних дисков и колодок",
-      "title": "Тормоз-кит Kia Rio 4: диски и колодки перед",
-      "example_price": "7 990 ₽",
-      "peek": ["disc", "pads", "spray"],
+      "id": "to-02-solaris-2017",
+      "sku": "TO-02",
+      "kind": "to",
+      "type": "ТО-КИТ",
+      "car": "Hyundai Solaris 2017–2022",
+      "job": "Моторы 1.4 / 1.6 · всё для планового ТО",
+      "engine": "G4LC / G4FG",
+      "drive": "цепь",
+      "title": "ТО-кит Hyundai Solaris 2017–2022: масло и фильтры",
+      "priority": "высокий",
+      "peek": [
+        "oil",
+        "oil_filter",
+        "air_filter"
+      ],
       "items": [
-        {"name": "Диски тормозные передние", "qty": "×2", "icon": "disc"},
-        {"name": "Колодки передние", "qty": "", "icon": "pads"},
-        {"name": "Смазка направляющих", "qty": "", "icon": "grease"},
-        {"name": "Очиститель тормозов", "qty": "", "icon": "spray"},
-        {"name": "Карта ремонта с QR-видео", "qty": "", "icon": "card"}
+        {
+          "name": "Масло моторное",
+          "qty": "4 л",
+          "icon": "oil"
+        },
+        {
+          "name": "Фильтр масляный",
+          "qty": "",
+          "icon": "oil_filter"
+        },
+        {
+          "name": "Фильтр воздушный",
+          "qty": "",
+          "icon": "air_filter"
+        },
+        {
+          "name": "Фильтр салонный",
+          "qty": "",
+          "icon": "cabin_filter"
+        },
+        {
+          "name": "Шайба сливной пробки",
+          "qty": "",
+          "icon": "washer"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
       ]
     },
     {
-      "id": "stab-polo",
-      "type": "СТАБИЛИЗАТОР-КИТ",
-      "car": "VW Polo седан",
-      "job": "Замена стоек и втулок стабилизатора",
-      "title": "Стабилизатор-кит VW Polo седан: стойки, втулки",
-      "example_price": "3 890 ₽",
-      "peek": ["link", "bushing", "nut"],
+      "id": "to-03-rio-3",
+      "sku": "TO-03",
+      "kind": "to",
+      "type": "ТО-КИТ",
+      "car": "Kia Rio 2011–2017",
+      "job": "Моторы 1.4 / 1.6 · всё для планового ТО",
+      "engine": "G4FA / G4FC",
+      "drive": "цепь",
+      "title": "ТО-кит Kia Rio 3 2011–2017: масло и фильтры",
+      "priority": "высокий",
+      "peek": [
+        "oil",
+        "oil_filter",
+        "air_filter"
+      ],
       "items": [
-        {"name": "Стойки стабилизатора", "qty": "×2", "icon": "link"},
-        {"name": "Втулки стабилизатора", "qty": "×2", "icon": "bushing"},
-        {"name": "Гайки самоконтрящиеся", "qty": "×4", "icon": "nut"},
-        {"name": "Карта ремонта с QR-видео", "qty": "", "icon": "card"}
+        {
+          "name": "Масло моторное",
+          "qty": "4 л",
+          "icon": "oil"
+        },
+        {
+          "name": "Фильтр масляный",
+          "qty": "",
+          "icon": "oil_filter"
+        },
+        {
+          "name": "Фильтр воздушный",
+          "qty": "",
+          "icon": "air_filter"
+        },
+        {
+          "name": "Фильтр салонный",
+          "qty": "",
+          "icon": "cabin_filter"
+        },
+        {
+          "name": "Шайба сливной пробки",
+          "qty": "",
+          "icon": "washer"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
       ]
     },
     {
-      "id": "winter-creta",
-      "type": "ЗИМА-КИТ",
-      "car": "Hyundai Creta 1.6",
-      "job": "Подготовка к зиме",
-      "title": "Зима-кит Hyundai Creta 1.6: щётки, лампы, свечи",
-      "example_price": "3 490 ₽",
-      "peek": ["wiper", "spark_plug", "bulb"],
+      "id": "to-04-rio-4",
+      "sku": "TO-04",
+      "kind": "to",
+      "type": "ТО-КИТ",
+      "car": "Kia Rio 2017–2021",
+      "job": "Моторы 1.4 / 1.6 · всё для планового ТО",
+      "engine": "G4LC / G4FG",
+      "drive": "цепь",
+      "title": "ТО-кит Kia Rio 4 2017–2021: масло и фильтры",
+      "priority": "высокий",
+      "peek": [
+        "oil",
+        "oil_filter",
+        "air_filter"
+      ],
       "items": [
-        {"name": "Щётки стеклоочистителя", "qty": "×2", "icon": "wiper"},
-        {"name": "Лампы ближнего света", "qty": "×2", "icon": "bulb"},
-        {"name": "Свечи зажигания", "qty": "×4", "icon": "spark_plug"},
-        {"name": "Карта ремонта с QR-видео", "qty": "", "icon": "card"}
+        {
+          "name": "Масло моторное",
+          "qty": "4 л",
+          "icon": "oil"
+        },
+        {
+          "name": "Фильтр масляный",
+          "qty": "",
+          "icon": "oil_filter"
+        },
+        {
+          "name": "Фильтр воздушный",
+          "qty": "",
+          "icon": "air_filter"
+        },
+        {
+          "name": "Фильтр салонный",
+          "qty": "",
+          "icon": "cabin_filter"
+        },
+        {
+          "name": "Шайба сливной пробки",
+          "qty": "",
+          "icon": "washer"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "to-05-polo-cfna",
+      "sku": "TO-05",
+      "kind": "to",
+      "type": "ТО-КИТ",
+      "car": "VW Polo 1.6 CFNA",
+      "job": "Седан 2010–2015 · всё для планового ТО",
+      "engine": "CFNA / CFNB",
+      "drive": "цепь",
+      "title": "ТО-кит VW Polo 1.6 CFNA: масло и фильтры",
+      "priority": "высокий",
+      "peek": [
+        "oil",
+        "oil_filter",
+        "air_filter"
+      ],
+      "items": [
+        {
+          "name": "Масло моторное",
+          "qty": "4 л",
+          "icon": "oil"
+        },
+        {
+          "name": "Фильтр масляный",
+          "qty": "",
+          "icon": "oil_filter"
+        },
+        {
+          "name": "Фильтр воздушный",
+          "qty": "",
+          "icon": "air_filter"
+        },
+        {
+          "name": "Фильтр салонный",
+          "qty": "",
+          "icon": "cabin_filter"
+        },
+        {
+          "name": "Шайба сливной пробки",
+          "qty": "",
+          "icon": "washer"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "to-06-polo-cwva",
+      "sku": "TO-06",
+      "kind": "to",
+      "type": "ТО-КИТ",
+      "car": "VW Polo 1.6 CWVA",
+      "job": "Седан и лифтбек 2015+ · всё для планового ТО",
+      "engine": "CWVA / CWVB",
+      "drive": "ремень",
+      "title": "ТО-кит VW Polo 1.6 CWVA: масло и фильтры",
+      "priority": "высокий",
+      "peek": [
+        "oil",
+        "oil_filter",
+        "air_filter"
+      ],
+      "items": [
+        {
+          "name": "Масло моторное",
+          "qty": "4 л",
+          "icon": "oil"
+        },
+        {
+          "name": "Фильтр масляный",
+          "qty": "",
+          "icon": "oil_filter"
+        },
+        {
+          "name": "Фильтр воздушный",
+          "qty": "",
+          "icon": "air_filter"
+        },
+        {
+          "name": "Фильтр салонный",
+          "qty": "",
+          "icon": "cabin_filter"
+        },
+        {
+          "name": "Шайба сливной пробки",
+          "qty": "",
+          "icon": "washer"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "to-07-jolion",
+      "sku": "TO-07",
+      "kind": "to",
+      "type": "ТО-КИТ",
+      "car": "Haval Jolion 1.5T",
+      "job": "2021+ · всё для планового ТО",
+      "engine": "GW4B15A",
+      "drive": "цепь",
+      "title": "ТО-кит Haval Jolion 1.5T: масло и фильтры",
+      "priority": "высокий",
+      "peek": [
+        "oil",
+        "oil_filter",
+        "air_filter"
+      ],
+      "items": [
+        {
+          "name": "Масло моторное",
+          "qty": "",
+          "icon": "oil"
+        },
+        {
+          "name": "Фильтр масляный",
+          "qty": "",
+          "icon": "oil_filter"
+        },
+        {
+          "name": "Фильтр воздушный",
+          "qty": "",
+          "icon": "air_filter"
+        },
+        {
+          "name": "Фильтр салонный",
+          "qty": "",
+          "icon": "cabin_filter"
+        },
+        {
+          "name": "Шайба сливной пробки",
+          "qty": "",
+          "icon": "washer"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "to-08-f7-15",
+      "sku": "TO-08",
+      "kind": "to",
+      "type": "ТО-КИТ",
+      "car": "Haval F7 / F7x 1.5T",
+      "job": "2019+ · всё для планового ТО",
+      "engine": "GW4B15",
+      "drive": "цепь",
+      "title": "ТО-кит Haval F7/F7x 1.5T: масло и фильтры",
+      "priority": "высокий",
+      "peek": [
+        "oil",
+        "oil_filter",
+        "air_filter"
+      ],
+      "items": [
+        {
+          "name": "Масло моторное",
+          "qty": "",
+          "icon": "oil"
+        },
+        {
+          "name": "Фильтр масляный",
+          "qty": "",
+          "icon": "oil_filter"
+        },
+        {
+          "name": "Фильтр воздушный",
+          "qty": "",
+          "icon": "air_filter"
+        },
+        {
+          "name": "Фильтр салонный",
+          "qty": "",
+          "icon": "cabin_filter"
+        },
+        {
+          "name": "Шайба сливной пробки",
+          "qty": "",
+          "icon": "washer"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "to-09-f7-20",
+      "sku": "TO-09",
+      "kind": "to",
+      "type": "ТО-КИТ",
+      "car": "Haval F7 / F7x 2.0T",
+      "job": "2019+ · всё для планового ТО",
+      "engine": "GW4C20",
+      "drive": "цепь",
+      "title": "ТО-кит Haval F7/F7x 2.0T: масло и фильтры",
+      "priority": "высокий",
+      "peek": [
+        "oil",
+        "oil_filter",
+        "air_filter"
+      ],
+      "items": [
+        {
+          "name": "Масло моторное",
+          "qty": "",
+          "icon": "oil"
+        },
+        {
+          "name": "Фильтр масляный",
+          "qty": "",
+          "icon": "oil_filter"
+        },
+        {
+          "name": "Фильтр воздушный",
+          "qty": "",
+          "icon": "air_filter"
+        },
+        {
+          "name": "Фильтр салонный",
+          "qty": "",
+          "icon": "cabin_filter"
+        },
+        {
+          "name": "Шайба сливной пробки",
+          "qty": "",
+          "icon": "washer"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "to-10-tiggo-7pro",
+      "sku": "TO-10",
+      "kind": "to",
+      "type": "ТО-КИТ",
+      "car": "Chery Tiggo 7 Pro 1.5T",
+      "job": "2020+ · всё для планового ТО",
+      "engine": "SQRE4T15C",
+      "drive": "цепь",
+      "title": "ТО-кит Chery Tiggo 7 Pro 1.5T: масло и фильтры",
+      "priority": "высокий",
+      "peek": [
+        "oil",
+        "oil_filter",
+        "air_filter"
+      ],
+      "items": [
+        {
+          "name": "Масло моторное",
+          "qty": "",
+          "icon": "oil"
+        },
+        {
+          "name": "Фильтр масляный",
+          "qty": "",
+          "icon": "oil_filter"
+        },
+        {
+          "name": "Фильтр воздушный",
+          "qty": "",
+          "icon": "air_filter"
+        },
+        {
+          "name": "Фильтр салонный",
+          "qty": "",
+          "icon": "cabin_filter"
+        },
+        {
+          "name": "Шайба сливной пробки",
+          "qty": "",
+          "icon": "washer"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "to-11-tiggo-4pro",
+      "sku": "TO-11",
+      "kind": "to",
+      "type": "ТО-КИТ",
+      "car": "Chery Tiggo 4 Pro 1.5T",
+      "job": "2022+ · всё для планового ТО",
+      "engine": "SQRE4T15C",
+      "drive": "цепь",
+      "title": "ТО-кит Chery Tiggo 4 Pro 1.5T: масло и фильтры",
+      "priority": "высокий",
+      "peek": [
+        "oil",
+        "oil_filter",
+        "air_filter"
+      ],
+      "items": [
+        {
+          "name": "Масло моторное",
+          "qty": "",
+          "icon": "oil"
+        },
+        {
+          "name": "Фильтр масляный",
+          "qty": "",
+          "icon": "oil_filter"
+        },
+        {
+          "name": "Фильтр воздушный",
+          "qty": "",
+          "icon": "air_filter"
+        },
+        {
+          "name": "Фильтр салонный",
+          "qty": "",
+          "icon": "cabin_filter"
+        },
+        {
+          "name": "Шайба сливной пробки",
+          "qty": "",
+          "icon": "washer"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "to-12-coolray",
+      "sku": "TO-12",
+      "kind": "to",
+      "type": "ТО-КИТ",
+      "car": "Geely Coolray 1.5T",
+      "job": "2020+ · всё для планового ТО",
+      "engine": "JLH-3G15TD",
+      "drive": "ремень + ремень помпы",
+      "title": "ТО-кит Geely Coolray 1.5T: масло и фильтры",
+      "priority": "высокий",
+      "peek": [
+        "oil",
+        "oil_filter",
+        "air_filter"
+      ],
+      "items": [
+        {
+          "name": "Масло моторное",
+          "qty": "",
+          "icon": "oil"
+        },
+        {
+          "name": "Фильтр масляный",
+          "qty": "",
+          "icon": "oil_filter"
+        },
+        {
+          "name": "Фильтр воздушный",
+          "qty": "",
+          "icon": "air_filter"
+        },
+        {
+          "name": "Фильтр салонный",
+          "qty": "",
+          "icon": "cabin_filter"
+        },
+        {
+          "name": "Шайба сливной пробки",
+          "qty": "",
+          "icon": "washer"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "grm-01-solaris-2010",
+      "sku": "GRM-01",
+      "kind": "grm",
+      "type": "ГРМ-КИТ",
+      "car": "Hyundai Solaris 2010–2017",
+      "engine": "G4FA / G4FC",
+      "drive": "цепь",
+      "priority": "высокий",
+      "job": "Моторы 1.4 / 1.6 · замена цепи ГРМ",
+      "title": "ГРМ-кит Hyundai Solaris 2010–2017: цепь",
+      "peek": [
+        "chain",
+        "tensioner",
+        "seal"
+      ],
+      "items": [
+        {
+          "name": "Цепь ГРМ",
+          "qty": "",
+          "icon": "chain"
+        },
+        {
+          "name": "Натяжитель цепи",
+          "qty": "",
+          "icon": "tensioner"
+        },
+        {
+          "name": "Успокоители цепи",
+          "qty": "",
+          "icon": "guide"
+        },
+        {
+          "name": "Сальник коленвала",
+          "qty": "",
+          "icon": "seal"
+        },
+        {
+          "name": "Герметик",
+          "qty": "",
+          "icon": "sealant"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "grm-02-solaris-2017",
+      "sku": "GRM-02",
+      "kind": "grm",
+      "type": "ГРМ-КИТ",
+      "car": "Hyundai Solaris 2017–2022",
+      "engine": "G4LC / G4FG",
+      "drive": "цепь",
+      "priority": "высокий",
+      "job": "Моторы 1.4 / 1.6 · замена цепи ГРМ",
+      "title": "ГРМ-кит Hyundai Solaris 2017–2022: цепь",
+      "peek": [
+        "chain",
+        "tensioner",
+        "seal"
+      ],
+      "items": [
+        {
+          "name": "Цепь ГРМ",
+          "qty": "",
+          "icon": "chain"
+        },
+        {
+          "name": "Натяжитель цепи",
+          "qty": "",
+          "icon": "tensioner"
+        },
+        {
+          "name": "Успокоители цепи",
+          "qty": "",
+          "icon": "guide"
+        },
+        {
+          "name": "Сальник коленвала",
+          "qty": "",
+          "icon": "seal"
+        },
+        {
+          "name": "Герметик",
+          "qty": "",
+          "icon": "sealant"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "grm-03-rio-3",
+      "sku": "GRM-03",
+      "kind": "grm",
+      "type": "ГРМ-КИТ",
+      "car": "Kia Rio 2011–2017",
+      "engine": "G4FA / G4FC",
+      "drive": "цепь",
+      "priority": "высокий",
+      "job": "Моторы 1.4 / 1.6 · замена цепи ГРМ",
+      "title": "ГРМ-кит Kia Rio 3 2011–2017: цепь, натяжитель",
+      "peek": [
+        "chain",
+        "tensioner",
+        "seal"
+      ],
+      "items": [
+        {
+          "name": "Цепь ГРМ",
+          "qty": "",
+          "icon": "chain"
+        },
+        {
+          "name": "Натяжитель цепи",
+          "qty": "",
+          "icon": "tensioner"
+        },
+        {
+          "name": "Успокоители цепи",
+          "qty": "",
+          "icon": "guide"
+        },
+        {
+          "name": "Сальник коленвала",
+          "qty": "",
+          "icon": "seal"
+        },
+        {
+          "name": "Герметик",
+          "qty": "",
+          "icon": "sealant"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "grm-04-rio-4",
+      "sku": "GRM-04",
+      "kind": "grm",
+      "type": "ГРМ-КИТ",
+      "car": "Kia Rio 2017–2021",
+      "engine": "G4LC / G4FG",
+      "drive": "цепь",
+      "priority": "высокий",
+      "job": "Моторы 1.4 / 1.6 · замена цепи ГРМ",
+      "title": "ГРМ-кит Kia Rio 4 2017–2021: цепь, натяжитель",
+      "peek": [
+        "chain",
+        "tensioner",
+        "seal"
+      ],
+      "items": [
+        {
+          "name": "Цепь ГРМ",
+          "qty": "",
+          "icon": "chain"
+        },
+        {
+          "name": "Натяжитель цепи",
+          "qty": "",
+          "icon": "tensioner"
+        },
+        {
+          "name": "Успокоители цепи",
+          "qty": "",
+          "icon": "guide"
+        },
+        {
+          "name": "Сальник коленвала",
+          "qty": "",
+          "icon": "seal"
+        },
+        {
+          "name": "Герметик",
+          "qty": "",
+          "icon": "sealant"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "grm-05-polo-cfna",
+      "sku": "GRM-05",
+      "kind": "grm",
+      "type": "ГРМ-КИТ",
+      "car": "VW Polo 1.6 CFNA",
+      "engine": "CFNA / CFNB",
+      "drive": "цепь",
+      "priority": "средний",
+      "job": "Седан 2010–2015 · замена цепи ГРМ",
+      "title": "ГРМ-кит VW Polo 1.6 CFNA: цепь, натяжитель",
+      "peek": [
+        "chain",
+        "tensioner",
+        "seal"
+      ],
+      "items": [
+        {
+          "name": "Цепь ГРМ",
+          "qty": "",
+          "icon": "chain"
+        },
+        {
+          "name": "Натяжитель цепи",
+          "qty": "",
+          "icon": "tensioner"
+        },
+        {
+          "name": "Успокоители цепи",
+          "qty": "",
+          "icon": "guide"
+        },
+        {
+          "name": "Сальник коленвала",
+          "qty": "",
+          "icon": "seal"
+        },
+        {
+          "name": "Герметик",
+          "qty": "",
+          "icon": "sealant"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "grm-06-polo-cwva",
+      "sku": "GRM-06",
+      "kind": "grm",
+      "type": "ГРМ-КИТ",
+      "car": "VW Polo 1.6 CWVA",
+      "engine": "CWVA / CWVB",
+      "drive": "ремень",
+      "priority": "высокий",
+      "job": "Седан и лифтбек 2015+ · замена ремня ГРМ",
+      "title": "ГРМ-кит VW Polo 1.6 CWVA: ремень и ролик",
+      "peek": [
+        "belt",
+        "roller"
+      ],
+      "items": [
+        {
+          "name": "Ремень ГРМ",
+          "qty": "",
+          "icon": "belt"
+        },
+        {
+          "name": "Ролик натяжной",
+          "qty": "",
+          "icon": "roller"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "grm-07-jolion",
+      "sku": "GRM-07",
+      "kind": "grm",
+      "type": "ГРМ-КИТ",
+      "car": "Haval Jolion 1.5T",
+      "engine": "GW4B15A",
+      "drive": "цепь",
+      "priority": "средний",
+      "job": "2021+ · замена цепи ГРМ",
+      "title": "ГРМ-кит Haval Jolion 1.5T: цепь, натяжитель",
+      "peek": [
+        "chain",
+        "tensioner",
+        "seal"
+      ],
+      "items": [
+        {
+          "name": "Цепь ГРМ",
+          "qty": "",
+          "icon": "chain"
+        },
+        {
+          "name": "Натяжитель цепи",
+          "qty": "",
+          "icon": "tensioner"
+        },
+        {
+          "name": "Успокоители цепи",
+          "qty": "",
+          "icon": "guide"
+        },
+        {
+          "name": "Сальник коленвала",
+          "qty": "",
+          "icon": "seal"
+        },
+        {
+          "name": "Герметик",
+          "qty": "",
+          "icon": "sealant"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "grm-08-f7-15",
+      "sku": "GRM-08",
+      "kind": "grm",
+      "type": "ГРМ-КИТ",
+      "car": "Haval F7 / F7x 1.5T",
+      "engine": "GW4B15",
+      "drive": "цепь",
+      "priority": "высокий",
+      "job": "2019+ · замена цепи ГРМ",
+      "title": "ГРМ-кит Haval F7/F7x 1.5T: цепь, натяжитель",
+      "peek": [
+        "chain",
+        "tensioner",
+        "seal"
+      ],
+      "items": [
+        {
+          "name": "Цепь ГРМ",
+          "qty": "",
+          "icon": "chain"
+        },
+        {
+          "name": "Натяжитель цепи",
+          "qty": "",
+          "icon": "tensioner"
+        },
+        {
+          "name": "Успокоители цепи",
+          "qty": "",
+          "icon": "guide"
+        },
+        {
+          "name": "Сальник коленвала",
+          "qty": "",
+          "icon": "seal"
+        },
+        {
+          "name": "Герметик",
+          "qty": "",
+          "icon": "sealant"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "grm-09-f7-20",
+      "sku": "GRM-09",
+      "kind": "grm",
+      "type": "ГРМ-КИТ",
+      "car": "Haval F7 / F7x 2.0T",
+      "engine": "GW4C20",
+      "drive": "цепь",
+      "priority": "средний",
+      "job": "2019+ · замена цепи ГРМ",
+      "title": "ГРМ-кит Haval F7/F7x 2.0T: цепь, натяжитель",
+      "peek": [
+        "chain",
+        "tensioner",
+        "seal"
+      ],
+      "items": [
+        {
+          "name": "Цепь ГРМ",
+          "qty": "",
+          "icon": "chain"
+        },
+        {
+          "name": "Натяжитель цепи",
+          "qty": "",
+          "icon": "tensioner"
+        },
+        {
+          "name": "Успокоители цепи",
+          "qty": "",
+          "icon": "guide"
+        },
+        {
+          "name": "Сальник коленвала",
+          "qty": "",
+          "icon": "seal"
+        },
+        {
+          "name": "Герметик",
+          "qty": "",
+          "icon": "sealant"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "grm-10-tiggo-7pro",
+      "sku": "GRM-10",
+      "kind": "grm",
+      "type": "ГРМ-КИТ",
+      "car": "Chery Tiggo 7 Pro / 4 Pro 1.5T",
+      "engine": "SQRE4T15C",
+      "drive": "цепь",
+      "priority": "позже",
+      "job": "2020+ · замена цепи ГРМ",
+      "title": "ГРМ-кит Chery Tiggo 7 Pro/4 Pro 1.5T: цепь",
+      "peek": [
+        "chain",
+        "tensioner",
+        "seal"
+      ],
+      "items": [
+        {
+          "name": "Цепь ГРМ",
+          "qty": "",
+          "icon": "chain"
+        },
+        {
+          "name": "Натяжитель цепи",
+          "qty": "",
+          "icon": "tensioner"
+        },
+        {
+          "name": "Успокоители цепи",
+          "qty": "",
+          "icon": "guide"
+        },
+        {
+          "name": "Сальник коленвала",
+          "qty": "",
+          "icon": "seal"
+        },
+        {
+          "name": "Герметик",
+          "qty": "",
+          "icon": "sealant"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
+      "id": "grm-12-coolray",
+      "sku": "GRM-12",
+      "kind": "grm",
+      "type": "ГРМ-КИТ",
+      "car": "Geely Coolray 1.5T",
+      "engine": "JLH-3G15TD",
+      "drive": "ремень + ремень помпы",
+      "priority": "высокий",
+      "job": "2020+ · ремень ГРМ и ремень помпы",
+      "title": "ГРМ-кит Geely Coolray 1.5T: 2 ремня и ролик",
+      "peek": [
+        "belt",
+        "roller"
+      ],
+      "items": [
+        {
+          "name": "Ремень ГРМ",
+          "qty": "",
+          "icon": "belt"
+        },
+        {
+          "name": "Ролик натяжной",
+          "qty": "",
+          "icon": "roller"
+        },
+        {
+          "name": "Ремень привода помпы",
+          "qty": "",
+          "icon": "belt"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
       ]
     }
   ]

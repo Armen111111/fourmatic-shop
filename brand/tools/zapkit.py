@@ -263,6 +263,42 @@ def icon(name):
                 f'<path d="M48,70 V40 Q48,18 60,18 Q72,18 72,40 V70 Z" fill="{PAPER}" stroke="{I}" stroke-width="3"/>'
                 f'<path d="M55,64 V44 Q60,36 65,44 V64" fill="none" stroke="{Y}" stroke-width="3"/>'
                 f'<path d="M84,30 L94,24 M86,44 L98,44 M84,58 L94,64" stroke="{Y}" stroke-width="4" stroke-linecap="round"/>')
+    # --- ГРМ ---
+    loop = "M36,38 L88,32 A28,28 0 0 1 88,88 L36,82 A22,22 0 0 1 36,38 Z"
+    if name == "chain":
+        return (f'<circle cx="36" cy="60" r="17" fill="{S}"/><circle cx="36" cy="60" r="6" fill="{I}"/>'
+                f'<circle cx="88" cy="60" r="23" fill="{S}"/><circle cx="88" cy="60" r="8" fill="{I}"/>'
+                f'<path d="{loop}" fill="none" stroke="{I}" stroke-width="9"/>'
+                f'<path d="{loop}" fill="none" stroke="{WHITE}" stroke-width="3" stroke-dasharray="3 5"/>')
+    if name == "belt":
+        return (f'<circle cx="36" cy="60" r="17" fill="{SL}"/><circle cx="36" cy="60" r="6" fill="{SD}"/>'
+                f'<circle cx="88" cy="60" r="23" fill="{SL}"/><circle cx="88" cy="60" r="8" fill="{SD}"/>'
+                f'<path d="{loop}" fill="none" stroke="{I}" stroke-width="10"/>'
+                f'<path d="{loop}" fill="none" stroke="{Y}" stroke-width="2"/>')
+    if name == "tensioner":
+        return (f'<rect x="20" y="34" width="16" height="52" rx="4" fill="{SD}"/>'
+                f'<circle cx="28" cy="44" r="4" fill="{PAPER}"/><circle cx="28" cy="76" r="4" fill="{PAPER}"/>'
+                f'<rect x="34" y="44" width="52" height="32" rx="6" fill="{I}"/>'
+                f'<rect x="86" y="53" width="18" height="14" rx="3" fill="{S}"/>'
+                f'<rect x="46" y="56" width="28" height="8" rx="2" fill="{Y}"/>')
+    if name == "guide":
+        return (f'<path d="M12,78 Q60,36 108,52 L106,64 Q60,52 16,90 Z" fill="{I}"/>'
+                f'<path d="M12,72 Q60,30 108,46 L108,52 Q60,36 12,78 Z" fill="{S}"/>'
+                f'<circle cx="30" cy="74" r="3.5" fill="{PAPER}"/><circle cx="90" cy="56" r="3.5" fill="{PAPER}"/>')
+    if name == "seal":
+        return (f'<path fill="{I}" fill-rule="evenodd" d="{circle_path(60, 60, 34)} {circle_path(60, 60, 14)}"/>'
+                f'<circle cx="60" cy="60" r="24" fill="none" stroke="{S}" stroke-width="6"/>'
+                f'<circle cx="60" cy="60" r="17" fill="none" stroke="{Y}" stroke-width="2"/>')
+    if name == "sealant":
+        return (f'<path d="M24,48 H82 L96,54 V66 L82,72 H24 Z" fill="{I}"/>'
+                f'<rect x="14" y="46" width="12" height="28" rx="2" fill="{S}"/>'
+                f'<path d="M96,56 L114,59 V61 L96,64 Z" fill="{S}"/>'
+                f'<rect x="38" y="53" width="32" height="14" rx="3" fill="{Y}"/>')
+    if name == "roller":
+        return (f'<path d="M22,88 L52,34 L70,44 L40,98 Z" fill="{I}"/>'
+                f'<circle cx="66" cy="58" r="30" fill="{SL}"/>'
+                f'<circle cx="66" cy="58" r="20" fill="none" stroke="{S}" stroke-width="4"/>'
+                f'<circle cx="66" cy="58" r="8" fill="{I}"/>')
     raise KeyError(name)
 
 

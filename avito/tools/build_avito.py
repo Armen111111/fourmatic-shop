@@ -260,7 +260,7 @@ def store_screen(kits):
                             "Подбор по VIN с гарантией."]):
         s.append(text(20, 276 + k * 19, ln, 13, INK, weight=400))
     cx = 20
-    for chip in ("Все", "ТО-киты", "Тормоза", "Подвеска", "Сезон"):
+    for chip in ("Все", "ТО-киты", "ГРМ-киты", "Корея", "Китай"):
         w = text_width(chip, 13, 400) + 24
         on = chip == "Все"
         s.append(f'<rect x="{cx}" y="336" width="{w}" height="30" rx="15" fill="{INK if on else "#F1F1F1"}"/>'
@@ -269,7 +269,7 @@ def store_screen(kits):
     for i, kit in enumerate(kits[:4]):
         x = 20 + (i % 2) * 181
         y = 384 + (i // 2) * 262
-        s.append(tile(card_thumb(kit, f"st{i}", x, y, 169), kit["title"], kit["example_price"], x, y))
+        s.append(tile(card_thumb(kit, f"st{i}", x, y, 169), kit["title"], MOCKUP_KITS.get(kit["id"], ""), x, y))
     return "".join(s)
 
 
@@ -286,7 +286,7 @@ def search_screen(kit):
                  + text(cx + w / 2, 136, chip, 13, INK, weight=400, anchor="middle"))
         cx += w + 8
     tiles = [
-        (card_thumb(kit, "ss0", 20, 164, 169), kit["title"], kit["example_price"], "Всё в одной коробке"),
+        (card_thumb(kit, "ss0", 20, 164, 169), kit["title"], MOCKUP_KITS.get(kit["id"], ""), "Всё в одной коробке"),
         (plain_thumb(["oil_filter"], 201, 164, 169, "p1"), "Фильтр масляный Солярис", "690 ₽", None),
         (plain_thumb(["oil"], 20, 426, 169, "p2"), "Масло моторное 4 л", "3 290 ₽", None),
         (plain_thumb(["oil_filter", "air_filter"], 201, 426, 169, "p3"), "Комплект ТО Солярис, фильтры", "1 490 ₽", None),
@@ -298,7 +298,14 @@ def search_screen(kit):
     return "".join(s)
 
 
+# Витрина макета и условные цены (только для картинки; реальные цены — в avito/zapkit-zakupka.xlsx)
+MOCKUP_KITS = {"to-01-solaris-2010": "4 690 ₽", "grm-12-coolray": "8 990 ₽",
+               "to-07-jolion": "6 490 ₽", "grm-06-polo-cwva": "5 990 ₽"}
+
+
 def store_mockup(kits):
+    by_id = {k["id"]: k for k in kits}
+    showcase = [by_id[i] for i in MOCKUP_KITS]
     MW, MH = 1800, 1420
     parts = [f'<rect width="{MW}" height="{MH}" fill="{PAPER}"/>',
              text(100, 90, "Так будет выглядеть ZAPKIT на Авито", 44, INK),
@@ -306,8 +313,8 @@ def store_mockup(kits):
              text(100 + 273, 214, "Страница магазина", 26, INK, anchor="middle"),
              text(1000 + 273, 214, "Поиск «то солярис»: вас видно среди обычных объявлений", 26, INK,
                   anchor="middle"),
-             f'<g transform="translate(100 240) scale(1.3)">{phone(store_screen(kits), "a")}</g>',
-             f'<g transform="translate(1000 240) scale(1.3)">{phone(search_screen(kits[0]), "b")}</g>']
+             f'<g transform="translate(100 240) scale(1.3)">{phone(store_screen(showcase), "a")}</g>',
+             f'<g transform="translate(1000 240) scale(1.3)">{phone(search_screen(by_id["to-01-solaris-2010"]), "b")}</g>']
     return svg(MW, MH, "".join(parts), "ZAPKIT — макет магазина на Авито")
 
 
@@ -318,9 +325,9 @@ def build():
         old.unlink()
     files = {}
     for n, kit in enumerate(kits, 1):
-        files[f"kit-{n:02d}-{kit['id']}-1-main.svg"] = svg(W, H, slide_main(kit, f"m{n}"),
+        files[f"{kit['id']}-1-main.svg"] = svg(W, H, slide_main(kit, f"m{n}"),
                                                             f"{kit['type']} {kit['car']}")
-        files[f"kit-{n:02d}-{kit['id']}-2-inside.svg"] = svg(W, H, slide_inside(kit, f"i{n}"),
+        files[f"{kit['id']}-2-inside.svg"] = svg(W, H, slide_inside(kit, f"i{n}"),
                                                               f"Что в коробке: {kit['type']} {kit['car']}")
         files[f"print-repair-card-{kit['id']}.svg"] = repair_card(kit, f"r{n}")
     files["common-3-guarantees.svg"] = svg(W, H, slide_guarantees(), "3 гарантии ZAPKIT")

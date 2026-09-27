@@ -15,7 +15,7 @@
 > - **Перед отправкой присылаем фото собранного кита.**
 > - Отправка 1–2 дня, доставка по всей России через Авито.
 >
-> Solaris, Rio, Polo, Rapid, Focus, Creta, Sportage, Jolion, Tiggo, Coolray — и не только. Не нашли свою машину? Напишите в чат, соберём кит под неё.
+> Hyundai Solaris, Kia Rio, VW Polo, Haval Jolion, Haval F7, Chery Tiggo, Geely Coolray. Не нашли свою машину? Напишите в чат, соберём кит под неё.
 
 ---
 

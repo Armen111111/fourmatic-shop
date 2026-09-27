@@ -61,7 +61,10 @@ python3 brand/tools/build_brand.py                                        # ло
 python3 avito/tools/build_avito.py                                        # карточки, печать, макет → avito/svg
 NODE_PATH=$(npm root -g) node brand/tools/render.js brand/svg brand/png   # PNG (нужен playwright)
 NODE_PATH=$(npm root -g) node brand/tools/render.js avito/svg avito/png
+python3 avito/tools/build_sheet.py --force                                # таблица закупки (перезапишет цены!)
 ```
+
+После `build_sheet.py` пересчитайте формулы (LibreOffice Calc), иначе значения в файле появятся только при открытии в Excel. Без `--force` скрипт не тронет существующую таблицу с вашими ценами.
 
 - Кит, буквы, иконки деталей и цвета заданы в `brand/tools/zapkit.py`.
 - Составы китов для карточек лежат в `avito/kits.json`: добавьте кит, запустите сборку, и появятся новые фото.
