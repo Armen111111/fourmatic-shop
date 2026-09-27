@@ -60,3 +60,9 @@ copy .env.example .env
 
 Как и с духами — Render.com (бесплатный тариф): подключить GitHub-репозиторий,
 Build Command `pip install -r requirements.txt`, Start Command `python -m bot.main`.
+
+## Магазин на Авито
+
+- `docs/avito/launch-plan.md`: анализ рынка, план запуска на 90 дней, УТП, название, финансы.
+- `docs/avito/templates.md`: шаблоны объявлений, скрипты для чата, таблицы конкурентов и метрик.
+- `brand/`: логотип ВПОРУ (SVG и PNG), аватар и обложка для Авито, брендбук.
