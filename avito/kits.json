@@ -610,30 +610,30 @@
           "name": "Масло Hyundai/Kia 5W-30",
           "qty": "4 л",
           "icon": "oil",
-          "brand": "Hyundai/Kia"
+          "brand": "Hyundai/Kia",
+          "buy_price": 2051,
+          "note": "Проверьте допуск: для Picanto рекомендуют API SM / ILSAC GF-4 и выше"
         },
         {
           "name": "Фильтр масляный",
           "qty": "",
           "icon": "oil_filter",
-          "brand": "AMD"
+          "brand": "AMD",
+          "buy_price": 154.7
         },
         {
           "name": "Фильтр воздушный",
           "qty": "",
           "icon": "air_filter",
-          "brand": "AMD"
+          "brand": "AMD",
+          "buy_price": 533
         },
         {
           "name": "Фильтр салонный",
           "qty": "",
           "icon": "cabin_filter",
-          "brand": "BIG FILTER"
-        },
-        {
-          "name": "Шайба сливной пробки",
-          "qty": "",
-          "icon": "washer"
+          "brand": "BIG FILTER",
+          "buy_price": 387
         },
         {
           "name": "Карта ремонта с QR-видео",

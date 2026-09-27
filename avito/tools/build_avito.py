@@ -159,8 +159,23 @@ def slide_how(uid="h"):
 
 
 # --- Печать: карта ремонта (A6, 300 dpi) ---------------------------------
-def repair_card(kit, uid):
-    CW, CH = 1240, 1748
+CW, CH = 1240, 1748  # A6 при 300 dpi
+
+
+def qr(url, x, y, size):
+    """QR-код ссылкой на видео (квадратики, без шрифтов и картинок)."""
+    import segno
+    rows = list(segno.make(url, error="m").matrix)
+    n = len(rows) + 8  # поле по 4 модуля с каждой стороны
+    m = size / n
+    cells = "".join(f'<rect x="{x + (c + 4) * m:.2f}" y="{y + (r + 4) * m:.2f}" width="{m + 0.3:.2f}" height="{m + 0.3:.2f}"/>'
+                    for r, row in enumerate(rows) for c, v in enumerate(row) if v)
+    return f'<rect x="{x}" y="{y}" width="{size}" height="{size}" fill="{WHITE}"/><g fill="{INK}">{cells}</g>'
+
+
+def repair_card_body(kit, uid):
+    """Вкладыш в коробку. VIN и артикулы вписываются от руки; бренды — из kits.json.
+    Если у кита есть ссылка на видео ("video" в kits.json) — печатается QR-код."""
     parts = [f'<rect width="{CW}" height="{CH}" fill="{WHITE}"/>',
              f'<rect width="{CW}" height="280" fill="{YELLOW}"/>',
              f'<g transform="translate(90 86) scale(1.18)">{lockup(INK, YELLOW, uid)}</g>',
@@ -170,22 +185,43 @@ def repair_card(kit, uid):
              text(90, 640, "Что в коробке:", 38, INK)]
     y = 700
     for item in kit["items"]:
+        if item["icon"] == "card":
+            continue
         parts.append(f'<rect x="90" y="{y}" width="46" height="46" rx="8" fill="none" stroke="{INK}" stroke-width="4"/>'
                      + text(160, y + 36, item_label(item), 34, INK))
-        if item["icon"] != "card":
-            parts.append(text(160, y + 80, "бренд / артикул: ______________________", 26, STEEL, weight=400))
+        brand = item.get("brand")
+        line = f"{brand} · артикул: __________________" if brand else "бренд / артикул: ______________________"
+        parts.append(text(160, y + 80, line, 26, STEEL, weight=400))
         y += 118
     qy = 1440
-    parts.append(f'<rect x="90" y="{qy}" width="230" height="230" rx="16" fill="none" stroke="{INK}" '
-                 f'stroke-width="4" stroke-dasharray="14 10"/>'
-                 + text(205, qy + 128, "QR", 48, STEEL, anchor="middle"))
-    tx = 370
-    parts.append(text(tx, qy + 40, "Видео: как сделать эту работу", 32, INK))
-    parts.append(text(tx, qy + 110, "Всё на месте? Оставьте отзыв на Авито —", 27, INK, weight=400))
-    parts.append(text(tx, qy + 146, "это очень помогает.", 27, INK, weight=400))
-    parts.append(text(tx, qy + 200, "Чего-то не хватает? Напишите нам в чат", 27, INK, weight=400))
-    parts.append(text(tx, qy + 236, "Авито — довезём бесплатно.", 27, INK, weight=400))
-    return svg(CW, CH, "".join(parts), f"ZAPKIT — карта ремонта: {kit['type']} {kit['car']}")
+    tx = 90
+    if kit.get("video"):
+        parts.append(qr(kit["video"], 90, qy - 10, 250))
+        tx = 380
+        parts.append(text(tx, qy + 40, "Видео: как сделать эту работу", 32, INK))
+    lines = [("Всё на месте? Оставьте отзыв на Авито —", "это очень помогает."),
+             ("Чего-то не хватает? Напишите нам в чат", "Авито — довезём бесплатно.")]
+    ly = qy + 110 if kit.get("video") else qy + 40
+    for a, b in lines:
+        parts.append(text(tx, ly, a, 27, INK, weight=400) + text(tx, ly + 36, b, 27, INK, weight=400))
+        ly += 90
+    return "".join(parts)
+
+
+def repair_card(kit, uid):
+    return svg(CW, CH, repair_card_body(kit, uid), f"ZAPKIT — карта ремонта: {kit['type']} {kit['car']}")
+
+
+def repair_cards_a4(kit, uid):
+    """4 одинаковые карты на листе A4 — печать дома, потом разрезать по линиям."""
+    AW, AH = CW * 2, CH * 2
+    parts = [f'<rect width="{AW}" height="{AH}" fill="{WHITE}"/>']
+    for i in range(4):
+        x, y = (i % 2) * CW, (i // 2) * CH
+        parts.append(f'<svg x="{x}" y="{y}" width="{CW}" height="{CH}" viewBox="0 0 {CW} {CH}">'
+                     f'{repair_card_body(kit, f"{uid}c{i}")}</svg>')
+    parts.append(f'<path d="M{CW},0 V{AH} M0,{CH} H{AW}" stroke="{STEEL_LIGHT}" stroke-width="3" stroke-dasharray="14 12"/>')
+    return svg(AW, AH, "".join(parts), f"ZAPKIT — карты ремонта A4: {kit['type']} {kit['car']}")
 
 
 # --- Печать: лист наклеек A4 (300 dpi) -----------------------------------
@@ -330,6 +366,8 @@ def build():
         files[f"{kit['id']}-2-inside.svg"] = svg(W, H, slide_inside(kit, f"i{n}"),
                                                               f"Что в коробке: {kit['type']} {kit['car']}")
         files[f"print-repair-card-{kit['id']}.svg"] = repair_card(kit, f"r{n}")
+        if kit.get("price"):  # кит собран — готовим лист A4 на 4 карты
+            files[f"print-repair-cards-a4-{kit['id']}.svg"] = repair_cards_a4(kit, f"a{n}")
     files["common-3-guarantees.svg"] = svg(W, H, slide_guarantees(), "3 гарантии ZAPKIT")
     files["common-4-how-to-order.svg"] = svg(W, H, slide_how(), "Как заказать в ZAPKIT")
     files["print-stickers-a4.svg"] = sticker_sheet()
