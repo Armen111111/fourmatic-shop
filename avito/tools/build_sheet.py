@@ -8,6 +8,7 @@
 """
 
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -74,6 +75,22 @@ def rub(v):
     return f"{v:,.2f}".replace(",", " ").replace(".", ",")
 
 
+MARKUP, PACK, STEP, MINUS = 0.30, 50, 100, 10
+
+
+def round_price(x):
+    return math.ceil(round(x, 6) / STEP) * STEP - MINUS
+
+
+def kit_price(kit, raise_):
+    """Цена кита так же, как её считает лист «Киты» (при резерве не в цене)."""
+    if kit.get("fixed_price"):
+        base = kit["fixed_price"]
+    else:
+        base = round_price((sum(it.get("buy_price", 0) for it in kit["items"]) + PACK) * (1 + MARKUP))
+    return round_price(base * (1 + raise_))
+
+
 def buy_rows(kit):
     """Закупочные позиции кита: (позиция, кол-во, комментарий, бренд, артикул).
 
@@ -124,7 +141,12 @@ def buy_rows(kit):
 def build():
     if OUT.exists() and "--force" not in sys.argv:
         sys.exit(f"{OUT} уже есть — в нём могут быть ваши цены. Чтобы создать заново, запустите с --force.")
-    kits = json.loads((ROOT / "avito" / "kits.json").read_text(encoding="utf-8"))["kits"]
+    data = json.loads((ROOT / "avito" / "kits.json").read_text(encoding="utf-8"))
+    kits, raise_ = data["kits"], data["price_raise"]
+    for k in kits:  # цены на фото и в текстах должны совпадать с таблицей
+        if k.get("price"):
+            want = f"{kit_price(k, raise_):,} ₽".replace(",", " ")
+            assert k["price"] == want, f'{k["sku"]}: в kits.json {k["price"]}, по таблице {want}'
     wb = Workbook()
 
     # --- Инструкция -------------------------------------------------------
@@ -139,9 +161,9 @@ def build():
         ("2. «Состав» — для каждой позиции подберите по VIN/каталогу бренд и артикул и впишите цены у тех поставщиков, где она есть.", False),
         ("    Лучшая цена, поставщик и сумма посчитаются сами. Кол-во 0 = позиция не входит (например, помпа); поставьте 1, если нужна.", False),
         ("3. «Киты» — сами посчитаются закупка, цена на Авито и прибыль до налога в двух вариантах: оплата через Авито Доставку и прямым переводом.", False),
-        ("    Впишите минимальную цену конкурентов — появится сравнение с рынком. Колонка Y «Своя цена по рынку» — если цену кита ставим по рынку, а не по наценке.", False),
-        ("4. «Параметры» — наценка, комиссии, резерв на товар, постоянные расходы и план заказов. Поменяете там — пересчитается всё.", False),
-        ("5. «Прогноз» — выручка и прибыль за месяц: ТО-киты и ГРМ-киты отдельно и вместе, точка безубыточности.", False),
+        ("    Впишите минимальную цену конкурентов — появится сравнение с рынком. Колонка Y «Цена по рынку (база)» — если цену кита ставим по рынку, а не по наценке.", False),
+        ("4. «Параметры» — наценка, повышение цен (+5%), комиссии, резерв на товар, постоянные расходы и план заказов. Поменяете там — пересчитается всё.", False),
+        ("5. «Прогноз» — выручка и прибыль за месяц: ТО, ГРМ и тормоз-киты отдельно и вместе, точка безубыточности.", False),
         ("6. «Моторы» — справка: где цепь, где ремень, что входит в ГРМ-кит, источники.", False),
         ("", False),
         ("Обозначения:", True),
@@ -159,11 +181,14 @@ def build():
     wp = wb.create_sheet("Параметры")
     header(wp, 1, ["Параметр", "Значение", "Пояснение / источник"], [44, 14, 96])
     params = [  # (ключ, название, значение, формат, пояснение)
-        ("markup", "Наценка к закупке", 0.30, "0.0%",
+        ("markup", "Наценка к закупке", MARKUP, "0.0%",
          "Цена кита = (детали + упаковка) × (1 + наценка), вверх до шага округления, минус «вычесть». Ваше решение."),
-        ("pack", "Упаковка на 1 кит, ₽", 50, RUB, "Коробка, наклейка, печать карты ремонта — оценка; уточните по факту."),
-        ("step", "Шаг округления цены, ₽", 100, RUB, "Цена округляется вверх до этого шага."),
-        ("minus", "Вычесть из округлённой цены, ₽", 10, RUB, "Чтобы цена заканчивалась на …90 (4 700 → 4 690)."),
+        ("pack", "Упаковка на 1 кит, ₽", PACK, RUB, "Коробка, наклейка, печать карты ремонта — оценка; уточните по факту."),
+        ("step", "Шаг округления цены, ₽", STEP, RUB, "Цена округляется вверх до этого шага."),
+        ("minus", "Вычесть из округлённой цены, ₽", MINUS, RUB, "Чтобы цена заканчивалась на …90 (4 700 → 4 690)."),
+        ("raise", "Повышение цен ко всем китам", raise_, "0.0%",
+         "Ваше решение: +5% сверху ко всем китам — и к цене по наценке, и к цене по рынку (колонка Y на листе «Киты»). "
+         "Затем снова округление до …90. Поставьте 0%, чтобы убрать."),
         ("fee", "Комиссия Авито Доставки", 0.065, "0.0%",
          "Только для заказов через Авито Доставку. ≈6,5% по данным селлерских сервисов (SelSup, 2026) — сверьте в кабинете Авито."),
         ("views", "Показы объявления на 1 заказ, ₽", 180, RUB,
@@ -207,7 +232,7 @@ def build():
             "Цена на Авито, ₽", "Мин. цена конкурентов, ₽", "Сравнение с рынком",
             "Комиссия Авито, ₽", "Комиссия банка, ₽", "Показы, ₽", "Резерв на товар, ₽", "Постоянные расходы, ₽",
             "Прибыль: Авито Доставка, ₽", "Прибыль: перевод, ₽", "Маржа (Авито Доставка)", "Статус",
-            "Своя цена по рынку, ₽"]
+            "Цена по рынку (база), ₽"]
     widths = [9, 8, 30, 15, 13, 11, 50, 34, 12, 11, 11, 12, 13, 14, 18, 12, 12, 11, 12, 13, 15, 14, 12, 14, 14]
     header(wk, 1, cols, widths)
     wk.row_dimensions[1].height = 44
@@ -225,8 +250,10 @@ def build():
         cell(wk, i, 10, f'=COUNTIFS(Состав!$A:$A,A{i},Состав!$P:$P,"",Состав!$D:$D,">0")')   # J
         cell(wk, i, 11, f'=IF(I{i}="","",{P["pack"]})', fmt=RUB)                               # K упаковка
         cell(wk, i, 12, f'=IF(I{i}="","",I{i}+K{i})', fmt=RUB)                                 # L закупка
-        cell(wk, i, 13, f'=IF(I{i}="","",IF(Y{i}<>"",Y{i},CEILING((I{i}*(1+{P["reserve"]}*{P["reserve_in_price"]})+K{i})'
-                        f'*(1+{P["markup"]}),{P["step"]})-{P["minus"]}))', fmt=RUB, bold=True)  # M цена
+        base = (f'IF(Y{i}<>"",Y{i},CEILING((I{i}*(1+{P["reserve"]}*{P["reserve_in_price"]})+K{i})'
+                f'*(1+{P["markup"]}),{P["step"]})-{P["minus"]})')
+        cell(wk, i, 13, f'=IF(I{i}="","",CEILING(({base})*(1+{P["raise"]}),{P["step"]})-{P["minus"]})',
+             fmt=RUB, bold=True)                                                                  # M цена
         cell(wk, i, 14, None, inp=True, fmt=RUB)                                               # N конкуренты
         cell(wk, i, 15, f'=IF(OR(M{i}="",N{i}=""),"",IF(M{i}<=N{i},"не дороже рынка","дороже рынка"))')
         cell(wk, i, 16, f'=IF(M{i}="","",M{i}*{P["fee"]})', fmt=RUB)                          # P Авито
@@ -239,8 +266,6 @@ def build():
         cell(wk, i, 23, f'=IF(U{i}="","",U{i}/M{i})', fmt="0.0%")
         cell(wk, i, 24, "не выложен", inp=True)
         fixed = k.get("fixed_price")                                                           # Y своя цена
-        if fixed is not None:
-            assert k.get("price") == f"{fixed:,} ₽".replace(",", " "), f'{k["sku"]}: price и fixed_price расходятся'
         cell(wk, i, 25, fixed, inp=True, fmt=RUB)
         if k.get("price_note"):
             wk.cell(row=i, column=25).comment = Comment(k["price_note"], "ZAPKIT")
@@ -257,88 +282,95 @@ def build():
                                                                          font=Font(name=FONT, color="C00000", bold=True)))
     wk.freeze_panes = "D2"
     wk["J1"].comment = Comment("Сколько позиций с кол-вом > 0 ещё без цены. 0 — кит полностью посчитан.", "ZAPKIT")
-    wk["M1"].comment = Comment("Считается по наценке с листа «Параметры». Если в колонке Y «Своя цена по рынку» "
-                               "есть число — берётся оно.", "ZAPKIT")
+    wk["M1"].comment = Comment("База — по наценке с листа «Параметры» или цена по рынку из колонки Y, если она есть. "
+                               "Сверху — «Повышение цен» с листа «Параметры», затем округление до …90.", "ZAPKIT")
     wk["Y1"].comment = Comment("Для китов, где цену ставим по рынку, а не по наценке: впишите цену, "
                                "по которой конечный покупатель берёт то же самое на маркетплейсах. "
-                               "Пусто — цена по наценке.", "ZAPKIT")
+                               "Повышение цен добавится сверху. Пусто — цена по наценке.", "ZAPKIT")
     wk["U1"].comment = Comment("До налога: цена − закупка − комиссия Авито − показы − резерв − постоянные расходы.", "ZAPKIT")
     wk["V1"].comment = Comment("До налога: цена − закупка − комиссия банка − показы − резерв − постоянные расходы − СДЭК за ваш счёт.", "ZAPKIT")
 
     # --- Прогноз на месяц -------------------------------------------------
     wf = wb.create_sheet("Прогноз")
-    for col, w in zip("ABCDEFGHIJKLM", [44, 14, 14, 14, 14, 13, 13, 12, 12, 12, 13, 15, 13]):
+    kinds = [("to", "ТО", "ТО-кит"), ("grm", "ГРМ", "ГРМ-кит"), ("brake", "Тормоза", "Тормоз-кит")]
+    kcols = "BCD"
+    widths = [44, 13, 13, 13, 14, 14, 13, 13, 12, 12, 12, 13, 15, 13]
+    for col, w in zip("ABCDEFGHIJKLMN", widths):
         wf.column_dimensions[col].width = w
-    c = wf.cell(row=1, column=1, value="Прогноз на месяц (до налога): ТО-киты и ГРМ-киты")
+    c = wf.cell(row=1, column=1, value="Прогноз на месяц (до налога): ТО, ГРМ и тормоз-киты")
     c.font = f(bold=True, size=14)
-    header(wf, 3, ["", "ТО-кит", "ГРМ-кит", "Пояснение"], [44, 14, 14, 14])
-    wf.merge_cells(start_row=3, start_column=4, end_row=3, end_column=12)
-    inputs = [  # (название, ТО, ГРМ, формат, пояснение)
-        ("Средний чек кита, ₽", 4490, 9990, RUB,
-         "ТО: среднее по Picanto (4 190) и Jetta (4 790). ГРМ: пока собран один — Coolray на Gates (9 990). "
-         "Когда соберёте больше китов, возьмите средние из справки ниже."),
-        ("Средняя стоимость деталей, ₽", 3365, 7056.23, RUB,
-         "ТО: среднее по Picanto и Jetta. ГРМ: Coolray — Gates K0120529 6 066 + ремень помпы 990,23."),
-    ]
-    for i, (name, to, grm, fmt, note) in enumerate(inputs, 4):
-        cell(wf, i, 1, name)
-        cell(wf, i, 2, to, inp=True, fmt=fmt)
-        cell(wf, i, 3, grm, inp=True, fmt=fmt)
-        cell(wf, i, 4, note, wrap=True)
-        wf.merge_cells(start_row=i, start_column=4, end_row=i, end_column=12)
-        wf.row_dimensions[i].height = 30
+    header(wf, 3, [""] + [t for _, _, t in kinds] + ["Пояснение"], widths[:5])
+    wf.merge_cells(start_row=3, start_column=5, end_row=3, end_column=14)
+
+    def note(r, text):
+        cell(wf, r, 5, text, wrap=True)
+        wf.merge_cells(start_row=r, start_column=5, end_row=r, end_column=14)
+
+    priced = {kind: [k for k in kits if k["kind"] == kind and k.get("price")] for kind, _, _ in kinds}
+    for r, name in ((4, "Средний чек кита, ₽"), (5, "Средняя стоимость деталей, ₽")):
+        cell(wf, r, 1, name)
+        for (kind, _, _), L in zip(kinds, kcols):
+            ks = priced[kind]
+            if r == 4:
+                v = sum(kit_price(k, raise_) for k in ks) / len(ks) if ks else None
+            else:
+                v = sum(sum(it.get("buy_price", 0) for it in k["items"]) for k in ks) / len(ks) if ks else None
+            cell(wf, r, ord(L) - 64, round(v, 2) if v else None, inp=True, fmt=RUB)
+    by_kind = "; ".join(f'{t}: ' + ", ".join(f'{k["car"]} ({k["price"]})' for k in priced[kind])
+                        for kind, _, t in kinds if priced[kind])
+    note(4, "Среднее по собранным китам, уже с повышением цен: " + by_kind + ". Замените, когда соберёте больше китов.")
+    note(5, "Среднее по деталям тех же китов (без упаковки).")
+    wf.row_dimensions[4].height = 44
     cell(wf, 6, 1, "Доля оплат через Авито Доставку")
     cell(wf, 6, 2, 0.5, inp=True, fmt="0%")
-    cell(wf, 6, 4, "Общая для ТО и ГРМ. Остальные — прямым переводом. Ваша оценка; уточните по факту.", wrap=True)
-    wf.merge_cells(start_row=6, start_column=4, end_row=6, end_column=12)
+    note(6, "Общая для всех китов. Остальные — прямым переводом. Ваша оценка; уточните по факту.")
     for r, name, col in ((7, "Справка: средний чек по листу «Киты»", "M"),
                          (8, "Справка: средние детали по листу «Киты»", "I")):
         cell(wf, r, 1, name)
-        for c_, kind in ((2, "ТО"), (3, "ГРМ")):
-            cell(wf, r, c_, f'=IFERROR(AVERAGEIFS(Киты!${col}:${col},Киты!$B:$B,"{kind}",Киты!${col}:${col},">0"),"")',
-                 fmt=RUB)
+        for (_, label, _), L in zip(kinds, kcols):
+            cell(wf, r, ord(L) - 64,
+                 f'=IFERROR(AVERAGEIFS(Киты!${col}:${col},Киты!$B:$B,"{label}",Киты!${col}:${col},">0"),"")', fmt=RUB)
     fixed_sum = "(" + "+".join(P[k] for k in fixed_keys) + ")"
     cell(wf, 9, 1, "Постоянные расходы в месяц, ₽")
     cell(wf, 9, 2, f"={fixed_sum}", fmt=RUB)
-    cell(wf, 9, 4, "Сумма постоянных расходов с листа «Параметры». Платятся один раз в месяц на весь магазин.", wrap=True)
-    wf.merge_cells(start_row=9, start_column=4, end_row=9, end_column=12)
+    note(9, "Сумма постоянных расходов с листа «Параметры». Платятся один раз в месяц на весь магазин.")
     cell(wf, 10, 1, "Прибыль с 1 заказа до постоянных расходов, ₽")
-    for c_, L in ((2, "B"), (3, "C")):
-        cell(wf, 10, c_, f"={L}4-({L}5+{P['pack']})-$B$6*{L}4*{P['fee']}-(1-$B$6)*({L}4*{P['bank']}+{P['cdek']})"
-                         f"-{P['views']}-{L}5*{P['reserve']}", fmt=RUB, bold=True)
     cell(wf, 11, 1, "Точка безубыточности, заказов в месяц", bold=True)
-    for c_, L in ((2, "B"), (3, "C")):
-        cell(wf, 11, c_, f'=IF({L}10<=0,"не окупается",ROUNDUP($B$9/{L}10,0))', bold=True)
-    cell(wf, 11, 4, "Сколько китов одного вида нужно продать, чтобы покрыть постоянные расходы.", wrap=True)
-    wf.merge_cells(start_row=11, start_column=4, end_row=11, end_column=12)
+    for L in kcols:
+        col = ord(L) - 64
+        cell(wf, 10, col, f"=IF({L}4=\"\",\"\",{L}4-({L}5+{P['pack']})-$B$6*{L}4*{P['fee']}"
+                          f"-(1-$B$6)*({L}4*{P['bank']}+{P['cdek']})-{P['views']}-{L}5*{P['reserve']})", fmt=RUB, bold=True)
+        cell(wf, 11, col, f'=IF({L}10="","",IF({L}10<=0,"не окупается",ROUNDUP($B$9/{L}10,0)))', bold=True)
+    note(11, "Сколько китов одного вида нужно продать, чтобы покрыть постоянные расходы.")
 
-    heads = ["Сценарий", "ТО-китов в месяц", "ГРМ-китов в месяц", "Выручка, ₽", "Детали и упаковка, ₽",
+    heads = ["Сценарий", "ТО-китов", "ГРМ-китов", "Тормоз-китов", "Выручка, ₽", "Детали и упаковка, ₽",
              "Комиссия Авито, ₽", "Комиссия банка, ₽", "Показы, ₽", "Резерв на товар, ₽", "СДЭК за ваш счёт, ₽",
              "Постоянные, ₽", "Прибыль до налога, ₽", "Прибыль на 1 заказ, ₽"]
-    header(wf, 13, heads, [44, 14, 14, 14, 14, 13, 13, 12, 12, 12, 13, 15, 13])
+    header(wf, 13, heads, widths)
     wf.row_dimensions[13].height = 44
-    scenarios = [("Только ГРМ", 0, 5), ("Только ГРМ", 0, 10), ("Только ГРМ", 0, 15), ("Только ГРМ", 0, 20),
-                 ("Только ГРМ", 0, 30), ("Только ТО — для сравнения", 20, 0), ("ТО + ГРМ", 20, 5),
-                 ("ТО + ГРМ", 20, 10), ("ТО + ГРМ", 30, 15), ("ТО + ГРМ", 50, 20)]
+    scenarios = [("Только ТО", 20, 0, 0), ("Только ГРМ", 0, 10, 0), ("Только тормоза", 0, 0, 10),
+                 ("Старт", 10, 5, 5), ("Рабочий месяц", 20, 10, 10), ("Хороший месяц", 30, 15, 15),
+                 ("Цель", 50, 20, 20)]
     first = 14
-    for j, (name, n_to, n_grm) in enumerate(scenarios, first):
+    for j, (name, *counts) in enumerate(scenarios, first):
         cell(wf, j, 1, name)
-        cell(wf, j, 2, n_to, inp=True, bold=True)
-        cell(wf, j, 3, n_grm, inp=True, bold=True)
-        cell(wf, j, 4, f"=B{j}*$B$4+C{j}*$C$4", fmt=RUB)
-        cell(wf, j, 5, f"=B{j}*($B$5+{P['pack']})+C{j}*($C$5+{P['pack']})", fmt=RUB)
-        cell(wf, j, 6, f"=$B$6*D{j}*{P['fee']}", fmt=RUB)
-        cell(wf, j, 7, f"=(1-$B$6)*D{j}*{P['bank']}", fmt=RUB)
-        cell(wf, j, 8, f"=(B{j}+C{j})*{P['views']}", fmt=RUB)
-        cell(wf, j, 9, f"=(B{j}*$B$5+C{j}*$C$5)*{P['reserve']}", fmt=RUB)
-        cell(wf, j, 10, f"=(B{j}+C{j})*(1-$B$6)*{P['cdek']}", fmt=RUB)
-        cell(wf, j, 11, "=$B$9", fmt=RUB)
-        cell(wf, j, 12, f"=D{j}-SUM(E{j}:K{j})", fmt=RUB, bold=True)
-        cell(wf, j, 13, f'=IF(B{j}+C{j}=0,"",L{j}/(B{j}+C{j}))', fmt=RUB)
+        for col, n in zip((2, 3, 4), counts):
+            cell(wf, j, col, n, inp=True, bold=True)
+        n_all = f"(B{j}+C{j}+D{j})"
+        cell(wf, j, 5, f"=N(B{j})*N($B$4)+N(C{j})*N($C$4)+N(D{j})*N($D$4)", fmt=RUB)
+        cell(wf, j, 6, f"=N(B{j})*(N($B$5)+{P['pack']})+N(C{j})*(N($C$5)+{P['pack']})+N(D{j})*(N($D$5)+{P['pack']})", fmt=RUB)
+        cell(wf, j, 7, f"=$B$6*E{j}*{P['fee']}", fmt=RUB)
+        cell(wf, j, 8, f"=(1-$B$6)*E{j}*{P['bank']}", fmt=RUB)
+        cell(wf, j, 9, f"={n_all}*{P['views']}", fmt=RUB)
+        cell(wf, j, 10, f"=(N(B{j})*N($B$5)+N(C{j})*N($C$5)+N(D{j})*N($D$5))*{P['reserve']}", fmt=RUB)
+        cell(wf, j, 11, f"={n_all}*(1-$B$6)*{P['cdek']}", fmt=RUB)
+        cell(wf, j, 12, "=$B$9", fmt=RUB)
+        cell(wf, j, 13, f"=E{j}-SUM(F{j}:L{j})", fmt=RUB, bold=True)
+        cell(wf, j, 14, f'=IF({n_all}=0,"",M{j}/{n_all})', fmt=RUB)
     last = first + len(scenarios) - 1
-    wf.conditional_formatting.add(f"L{first}:L{last}", CellIsRule(operator="lessThan", formula=["0"],
+    wf.conditional_formatting.add(f"M{first}:M{last}", CellIsRule(operator="lessThan", formula=["0"],
                                                                  font=Font(name=FONT, color="C00000", bold=True)))
-    cell(wf, last + 2, 1, "Налог не учтён. Число китов в колонках B и C можно менять. При росте продаж впишите в «Параметры» "
+    cell(wf, last + 2, 1, "Налог не учтён. Число китов в колонках B–D можно менять. При росте продаж впишите в «Параметры» "
                           "подписку Авито Pro, если подключите.", italic=True, color="8C929B")
 
     # --- Состав ----------------------------------------------------------
