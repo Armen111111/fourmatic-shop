@@ -153,7 +153,7 @@ def slide_how(uid="h"):
     for ax in (590, 970):
         parts.append(f'<path d="M{ax},520 H{ax + 60} M{ax + 44},504 L{ax + 62},520 L{ax + 44},536" fill="none" '
                      f'stroke="{STEEL_LIGHT}" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>')
-    parts.append(text(W / 2, 930, "Только новые детали · Доставка по всей России", 30, STEEL, weight=400, anchor="middle"))
+    parts.append(text(W / 2, 930, "Нет вашей машины в списке? Пришлите VIN — рассчитаем кит", 30, STEEL, weight=400, anchor="middle"))
     parts.append(bottom_bar("Нажмите «Написать» — подберём кит под вашу машину"))
     return "".join(parts)
 

@@ -15,7 +15,7 @@
 > - **Перед отправкой присылаем фото собранного кита.**
 > - Отправляем СДЭКом каждый вечер до 20:00.
 >
-> Hyundai Solaris, Kia Rio, VW Polo, Haval Jolion, Haval F7, Chery Tiggo, Geely Coolray. Не нашли свою машину? Напишите в чат, соберём кит под неё.
+> Hyundai Solaris, Kia Rio, VW Polo, Haval Jolion, Haval F7, Chery Tiggo, Geely Coolray. Не нашли свой автомобиль в списке? Отправьте VIN в чат — рассчитаем и соберём кит под вашу машину.
 
 ---
 
