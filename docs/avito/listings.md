@@ -18,7 +18,7 @@ ZAPKIT — ремонт в одной коробке. Сочи, доставка
 Собираем наборы запчастей под конкретную работу на вашей машине:
 ТО-кит (масло и все фильтры) и ГРМ-кит (цепь или ремень со всем необходимым).
 
-Hyundai Solaris, Kia Rio, VW Polo, Haval Jolion, Haval F7, Chery Tiggo, Geely Coolray.
+Hyundai Solaris, Kia Rio, Kia Picanto, VW Polo, Haval Jolion, Haval F7, Chery Tiggo, Geely Coolray.
 
 — Подбор по VIN. Не подошло по нашему подбору — вернём деньги.
 — Не хватило детали по нашей вине — довезём бесплатно.
@@ -54,6 +54,7 @@ Hyundai Solaris, Kia Rio, VW Polo, Haval Jolion, Haval F7, Chery Tiggo, Geely Co
 | TO-10 | `ТО-кит Chery Tiggo 7 Pro 1.5T: масло и фильтры` | `to-10-tiggo-7pro-1-main.png`, `to-10-tiggo-7pro-2-inside.png` | высокий |
 | TO-11 | `ТО-кит Chery Tiggo 4 Pro 1.5T: масло и фильтры` | `to-11-tiggo-4pro-1-main.png`, `to-11-tiggo-4pro-2-inside.png` | высокий |
 | TO-12 | `ТО-кит Geely Coolray 1.5T: масло и фильтры` | `to-12-coolray-1-main.png`, `to-12-coolray-2-inside.png` | высокий |
+| TO-13 | `ТО-кит Kia Picanto 1.0/1.2: масло и фильтры` | `to-13-picanto-1-main.png`, `to-13-picanto-2-inside.png` | высокий |
 | GRM-01 | `ГРМ-кит Hyundai Solaris 2010–2017: цепь` | `grm-01-solaris-2010-1-main.png`, `grm-01-solaris-2010-2-inside.png` | высокий |
 | GRM-02 | `ГРМ-кит Hyundai Solaris 2017–2022: цепь` | `grm-02-solaris-2017-1-main.png`, `grm-02-solaris-2017-2-inside.png` | высокий |
 | GRM-03 | `ГРМ-кит Kia Rio 3 2011–2017: цепь, натяжитель` | `grm-03-rio-3-1-main.png`, `grm-03-rio-3-2-inside.png` | высокий |
@@ -67,6 +68,47 @@ Hyundai Solaris, Kia Rio, VW Polo, Haval Jolion, Haval F7, Chery Tiggo, Geely Co
 | GRM-12 | `ГРМ-кит Geely Coolray 1.5T: 2 ремня и ролик` | `grm-12-coolray-1-main.png`, `grm-12-coolray-2-inside.png` | высокий |
 
 ---
+
+## Готовое объявление: ТО-кит Kia Picanto (TO-13)
+
+**Заголовок:**
+```
+ТО-кит Kia Picanto 1.0/1.2: масло и фильтры
+```
+
+**Цена:** `4 190 ₽`. Закупка 3 125,70 ₽ + шайба ~50 ₽ + упаковка 50 ₽ = 3 225,70 ₽; × 1,3 с округлением до …90.
+
+**Фото:** `to-13-picanto-1-main.png` → `to-13-picanto-2-inside.png` → `common-3-guarantees.png` → `common-4-how-to-order.png`
+
+**Описание:**
+```
+Всё для планового ТО Kia Picanto 1.0 / 1.2 в одной коробке.
+Подберём по VIN: пришлите VIN в чат, проверим каждую позицию.
+
+Что внутри:
+— Масло моторное Hyundai/Kia 5W-30, 4 л — фирменное масло Hyundai/Kia
+— Фильтр масляный — AMD <артикул>
+— Фильтр воздушный — AMD <артикул>
+— Фильтр салонный — BIG FILTER <артикул>
+— Шайба сливной пробки — <бренд> <артикул>
+— Карта ремонта с QR-видеоинструкцией
+
+4 литров хватает с запасом: мотору 1.0 нужно около 3,2 л, мотору 1.2 — около 3,6 л (с фильтром).
+
+Гарантии ZAPKIT:
+— Не хватило детали по нашей вине — довезём бесплатно.
+— Не подошло по нашему подбору — вернём деньги и оплатим обратную доставку.
+
+Кит выгоднее, чем покупать детали по отдельности.
+Любую позицию можно заменить на оригинал Hyundai/Kia: напишите в чат.
+
+Срок: под заказ, отправка через 1–2 дня. Перед отправкой пришлём фото собранного кита.
+Доставка по Сочи и всей России — Авито Доставкой. Только новые детали.
+
+ZAPKIT — ремонт в одной коробке.
+```
+
+> Проверьте допуск масла. По справочникам для Picanto рекомендуют API SM / ILSAC GF-4 или выше, а Super Extra Gasoline, по карточкам магазинов, — полусинтетика SL/GF-3. Сверьте с каталогом по VIN. Если допуск не подходит, возьмите масло с допуском SM/SN и выше, например Hyundai/Kia Turbo SYN Gasoline 5W-30.
 
 ## Шаблон: ТО-кит
 

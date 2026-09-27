@@ -590,6 +590,55 @@
       ]
     },
     {
+      "id": "to-13-picanto",
+      "sku": "TO-13",
+      "kind": "to",
+      "type": "ТО-КИТ",
+      "car": "Kia Picanto 1.0 / 1.2",
+      "job": "Всё для планового ТО",
+      "engine": "G3LA 1.0 / G4LA 1.2",
+      "drive": "цепь",
+      "title": "ТО-кит Kia Picanto 1.0/1.2: масло и фильтры",
+      "priority": "высокий",
+      "peek": [
+        "oil",
+        "oil_filter",
+        "air_filter"
+      ],
+      "items": [
+        {
+          "name": "Масло Hyundai/Kia 5W-30",
+          "qty": "4 л",
+          "icon": "oil"
+        },
+        {
+          "name": "Фильтр масляный",
+          "qty": "",
+          "icon": "oil_filter"
+        },
+        {
+          "name": "Фильтр воздушный",
+          "qty": "",
+          "icon": "air_filter"
+        },
+        {
+          "name": "Фильтр салонный",
+          "qty": "",
+          "icon": "cabin_filter"
+        },
+        {
+          "name": "Шайба сливной пробки",
+          "qty": "",
+          "icon": "washer"
+        },
+        {
+          "name": "Карта ремонта с QR-видео",
+          "qty": "",
+          "icon": "card"
+        }
+      ]
+    },
+    {
       "id": "grm-01-solaris-2010",
       "sku": "GRM-01",
       "kind": "grm",
