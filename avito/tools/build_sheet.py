@@ -75,7 +75,7 @@ def rub(v):
 
 
 def buy_rows(kit):
-    """Закупочные позиции кита: (позиция, кол-во, комментарий, бренд).
+    """Закупочные позиции кита: (позиция, кол-во, комментарий, бренд, артикул).
 
     ТО-кит раскладывается ровно по своему составу из kits.json — ничего не добавляем.
     """
@@ -90,20 +90,25 @@ def buy_rows(kit):
                 notes.insert(0, f"Ваша закупка: {rub(it['buy_price'])} ₽ — впишите в колонку поставщика, у которого брали")
             if it["icon"] == "oil" and not notes:
                 notes.append("Вязкость и допуск — по мануалу автомобиля")
-            rows.append((TO_ROWS[it["icon"]], 1, ". ".join(notes), it.get("brand")))
+            rows.append((TO_ROWS[it["icon"]], 1, ". ".join(notes), it.get("brand"), it.get("article")))
             if it["icon"] == "oil" and chinese:
                 rows.append(("Масло моторное 1 л (если объём > 4 л)", 0,
-                             "Поставьте 1, если объём заливки с фильтром больше 4 л (проверьте по VIN)", None))
+                             "Поставьте 1, если объём заливки с фильтром больше 4 л (проверьте по VIN)", None, None))
         return rows
-    optional = [("Помпа водяная (если потребуется)", 0, "Поставьте 1, если помпу меняют вместе с ГРМ", None),
-                ("Масляный насос (если потребуется)", 0, "Поставьте 1, если требуется по каталогу / по состоянию", None)]
+    optional = [("Помпа водяная (если потребуется)", 0, "Поставьте 1, если помпу меняют вместе с ГРМ", None, None),
+                ("Масляный насос (если потребуется)", 0, "Поставьте 1, если требуется по каталогу / по состоянию", None, None)]
+    assembled = [it for it in kit["items"] if it.get("buy_price") is not None]
+    if assembled:  # кит собран — строки ровно по его составу
+        return [(it.get("listing_name") or it["name"], 1,
+                 f"Ваша закупка: {rub(it['buy_price'])} ₽ — впишите в колонку поставщика, у которого брали",
+                 it.get("brand"), it.get("article")) for it in assembled] + optional
     if kit["drive"] == "цепь":
         return [("Комплект цепи ГРМ (цепь, натяжитель, успокоители)", 1,
-                 "Если готового комплекта нет — добавьте строки и купите позиции отдельно", None),
-                ("Сальник коленвала передний", 1, "", None), ("Герметик", 1, "", None)] + optional
-    rows = [("Комплект ремня ГРМ (ремень, натяжной ролик)", 1, "", None)]
+                 "Если готового комплекта нет — добавьте строки и купите позиции отдельно", None, None),
+                ("Сальник коленвала передний", 1, "", None, None), ("Герметик", 1, "", None, None)] + optional
+    rows = [("Комплект ремня ГРМ (ремень, натяжной ролик)", 1, "", None, None)]
     if "помпы" in kit["drive"]:
-        rows.append(("Ремень привода помпы", 1, "По регламенту меняется вместе с ремнём ГРМ", None))
+        rows.append(("Ремень привода помпы", 1, "По регламенту меняется вместе с ремнём ГРМ", None, None))
     return rows + optional
 
 
@@ -302,7 +307,7 @@ def build():
            [9, 26, 44, 8, 14, 16] + [11] * len(SUPPLIERS) + [12, 13, 12, 60])
     wc.row_dimensions[1].height = 44
 
-    def item_row(r, sku, pos, qty, note, example=None, brand=None):
+    def item_row(r, sku, pos, qty, note, example=None, brand=None, article=None):
         ex = example is not None
         cell(wc, r, 1, sku, bold=not ex, italic=ex, color="8C929B" if ex else None)
         car = "образец заполнения — строку можно удалить" if ex else \
@@ -311,7 +316,7 @@ def build():
         cell(wc, r, 3, pos)
         cell(wc, r, 4, qty, inp=True)
         cell(wc, r, 5, example["brand"] if ex else brand, inp=True)
-        cell(wc, r, 6, example["art"] if ex else None, inp=True)
+        cell(wc, r, 6, example["art"] if ex else article, inp=True)
         for j in range(len(SUPPLIERS)):
             v = example["prices"][j] if ex else None
             cell(wc, r, sup_first + j, v, inp=True, fmt=RUB)
@@ -332,8 +337,8 @@ def build():
                       "prices": [460, None, 445, 430, None, None, None, 470, None]})
     r = 3
     for k in kits:
-        for pos, qty, note, brand in buy_rows(k):
-            item_row(r, k["sku"], pos, qty, note, brand=brand)
+        for pos, qty, note, brand, article in buy_rows(k):
+            item_row(r, k["sku"], pos, qty, note, brand=brand, article=article)
             r += 1
     wc.freeze_panes = "D2"
     assert get_column_letter(sup_last + 3) == "R", "SUMIFS на листе «Киты» ссылается на колонку R"

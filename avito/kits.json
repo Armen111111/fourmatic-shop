@@ -1181,7 +1181,7 @@
       "drive": "ремень + ремень помпы",
       "priority": "высокий",
       "job": "2020+ · ремень ГРМ и ремень помпы",
-      "title": "ГРМ-кит Geely Coolray 1.5T: 2 ремня и ролик",
+      "title": "ГРМ-кит Geely Coolray 1.5T: 2 ремня и 2 ролика",
       "peek": [
         "belt",
         "roller"
@@ -1190,24 +1190,32 @@
         {
           "name": "Ремень ГРМ",
           "qty": "",
-          "icon": "belt"
+          "icon": "belt",
+          "brand": "XIAOLU",
+          "article": "XIBTK007",
+          "buy_price": 8582,
+          "listing_name": "Комплект ГРМ XIAOLU XIBTK007: ремень и 2 ролика"
         },
         {
-          "name": "Ролик натяжной",
-          "qty": "",
-          "icon": "roller"
+          "name": "Ролики ГРМ",
+          "qty": "×2",
+          "icon": "roller",
+          "in_kit": true
         },
         {
           "name": "Ремень привода помпы",
           "qty": "",
-          "icon": "belt"
+          "icon": "belt",
+          "buy_price": 990.23
         },
         {
           "name": "Карта ремонта",
           "qty": "",
           "icon": "card"
         }
-      ]
+      ],
+      "price": "12 590 ₽",
+      "lead_note": "Ремень помпы везём под заказ, поэтому этот кит отправляем через 3 дня после заказа."
     }
   ]
 }

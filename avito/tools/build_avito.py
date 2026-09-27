@@ -190,7 +190,14 @@ def repair_card_body(kit, uid):
         parts.append(f'<rect x="90" y="{y}" width="46" height="46" rx="8" fill="none" stroke="{INK}" stroke-width="4"/>'
                      + text(160, y + 36, item_label(item), 34, INK))
         brand = item.get("brand")
-        line = f"{brand} · артикул: __________________" if brand else "бренд / артикул: ______________________"
+        if item.get("in_kit"):
+            line = "входит в комплект"
+        elif brand and item.get("article"):
+            line = f"{brand} · артикул {item['article']}"
+        elif brand:
+            line = f"{brand} · артикул: __________________"
+        else:
+            line = "бренд / артикул: ______________________"
         parts.append(text(160, y + 80, line, 26, STEEL, weight=400))
         y += 118
     qy = 1440

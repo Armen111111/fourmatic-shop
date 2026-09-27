@@ -105,6 +105,8 @@ def item_line(it):
 
 
 def grm_items(kit):
+    if any(it.get("buy_price") is not None for it in kit["items"]):  # кит собран — ровно его состав
+        return [item_line(it) for it in kit["items"] if it["icon"] != "card" and not it.get("in_kit")]
     if kit["drive"] == "цепь":
         return ["• Цепь ГРМ, натяжитель и успокоители — комплектом", "• Сальник коленвала", "• Герметик"]
     lines = ["• Ремень ГРМ и натяжной ролик — комплектом"]
@@ -128,7 +130,8 @@ def description(kit, n):
                   "Работа ответственная — рекомендуем ставить в сервисе."]
     else:
         parts.append(alt)
-    parts += ["", GUARANTEES[n % len(GUARANTEES)], "", SHIPPING, "",
+    shipping = SHIPPING + (" " + kit["lead_note"] if kit.get("lead_note") else "")
+    parts += ["", GUARANTEES[n % len(GUARANTEES)], "", shipping, "",
               CTA[n % len(CTA)] + " " + OTHER_CAR[n % len(OTHER_CAR)]]
     return "\n".join(parts)
 
