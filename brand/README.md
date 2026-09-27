@@ -58,6 +58,7 @@ ZAP — от «запчасти», KIT по-английски значит «н
 
 ```bash
 python3 brand/tools/build_brand.py                                        # логотипы → brand/svg
+python3 avito/tools/build_listings.py                                     # тексты объявлений → docs/avito/listings.md
 python3 avito/tools/build_avito.py                                        # карточки, печать, макет → avito/svg
 NODE_PATH=$(npm root -g) node brand/tools/render.js brand/svg brand/png   # PNG (нужен playwright)
 NODE_PATH=$(npm root -g) node brand/tools/render.js avito/svg avito/png

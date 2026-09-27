@@ -609,22 +609,26 @@
         {
           "name": "Масло Hyundai/Kia 5W-30",
           "qty": "4 л",
-          "icon": "oil"
+          "icon": "oil",
+          "brand": "Hyundai/Kia"
         },
         {
           "name": "Фильтр масляный",
           "qty": "",
-          "icon": "oil_filter"
+          "icon": "oil_filter",
+          "brand": "AMD"
         },
         {
           "name": "Фильтр воздушный",
           "qty": "",
-          "icon": "air_filter"
+          "icon": "air_filter",
+          "brand": "AMD"
         },
         {
           "name": "Фильтр салонный",
           "qty": "",
-          "icon": "cabin_filter"
+          "icon": "cabin_filter",
+          "brand": "BIG FILTER"
         },
         {
           "name": "Шайба сливной пробки",
@@ -636,7 +640,8 @@
           "qty": "",
           "icon": "card"
         }
-      ]
+      ],
+      "price": "4 190 ₽"
     },
     {
       "id": "grm-01-solaris-2010",

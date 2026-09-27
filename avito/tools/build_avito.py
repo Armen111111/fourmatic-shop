@@ -22,7 +22,7 @@ from zapkit import (INK, PAPER, STEEL, STEEL_LIGHT, WHITE, YELLOW, check_icon,  
 OUT = ROOT / "avito" / "svg"
 W, H = 1600, 1200
 SAFE_L, SAFE_R = 230, 1370  # поля внутри квадрата 200…1400
-BAR = "Подбор по VIN · Всё в одной коробке · Отправка 1–2 дня"
+BAR = "Подбор по VIN · Всё в одной коробке · СДЭК каждый вечер"
 
 
 # --- Общие элементы карточек ---------------------------------------------
@@ -137,7 +137,7 @@ def vin_icon():
 def slide_how(uid="h"):
     cols = [(420, "Пришлите VIN", "17 символов из СТС"),
             (800, "Соберём кит", "и пришлём фото коробки"),
-            (1180, "Отправим за 1–2 дня", "Авито Доставкой")]
+            (1180, "Отправим СДЭКом", "каждый вечер до 20:00")]
     parts = [f'<rect width="{W}" height="{H}" fill="{PAPER}"/>', decor(), header(f"{uid}h"),
              text(W / 2, 270, "КАК ЗАКАЗАТЬ", 56, INK, anchor="middle")]
     icons = [f'<g transform="translate({420 - 120} 380)">{vin_icon()}</g>',
@@ -251,7 +251,7 @@ def store_screen(kits):
          f'<g transform="translate(20 110) scale(0.76) translate(50 52) scale(0.8) translate(-55 -52)">'
          f'{whale(INK, YELLOW, "avs")}</g></g>',
          text(110, 136, "ZAPKIT — запчасти наборами", 17, INK),
-         text(110, 160, "Магазин · отправка 1–2 дня", 13, STEEL, weight=400),
+         text(110, 160, "Магазин · СДЭК каждый вечер", 13, STEEL, weight=400),
          text(110, 182, "Пока нет отзывов", 13, STEEL, weight=400),
          f'<rect x="20" y="202" width="350" height="44" rx="12" fill="{INK}"/>',
          text(195, 230, "Написать", 16, PAPER, anchor="middle")]
@@ -280,7 +280,7 @@ def search_screen(kit):
          f'<path d="M46,84 L52,90" stroke="{STEEL}" stroke-width="2.4" stroke-linecap="round"/>',
          text(62, 86, "то солярис", 16, INK, weight=400)]
     cx = 16
-    for chip in ("Запчасти", "С Авито Доставкой", "Цена"):
+    for chip in ("Запчасти", "С доставкой", "Цена"):
         w = text_width(chip, 13, 400) + 24
         s.append(f'<rect x="{cx}" y="116" width="{w}" height="30" rx="15" fill="#F1F1F1"/>'
                  + text(cx + w / 2, 136, chip, 13, INK, weight=400, anchor="middle"))
