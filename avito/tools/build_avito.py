@@ -361,6 +361,56 @@ def store_mockup(kits):
     return svg(MW, MH, "".join(parts), "ZAPKIT — макет магазина на Авито")
 
 
+# --- Схема: путь клиента до заказа в работе --------------------------------
+LOOP = [  # (этап, срок, что делаем, если что-то пошло не так) — как в docs/avito/client-loop.md
+    ("Клиент написал", "до 5 минут", "Здороваемся и просим VIN", "Ночью — автоответ, отвечаем утром до 10:00"),
+    ("Ждём VIN", "через 3 ч и завтра", "Напоминаем, если молчит — не больше 2 раз", "Нет ответа → «Отказ: не ответил»"),
+    ("Подбор по VIN", "до 30 минут", "Проверяем каждую деталь, наличие и срок у поставщика",
+     "Чего-то нет → предлагаем замену"),
+    ("Предложение", "цена держится 24 ч", "Состав с брендами, цена, дата отправки, как оплатить",
+     "«Дорого» → другой бренд или без масла"),
+    ("Думает", "завтра и через 3 дня", "Два коротких напоминания, не больше", "Молчит → «Отказ» с причиной"),
+    ("Оплата", "проверяем в банке", "Авито Доставка или перевод на счёт ИП", "Скриншот — не оплата. Деньги пришли → шаг 7"),
+    ("В обработке", "сразу после оплаты", "Заказываем детали до отсечки, пишем дату отправки",
+     "Дальше: сборка → фото коробки → СДЭК до 20:00"),
+]
+
+
+def process_loop():
+    LW, x0, cw, ch, gap = 1200, 60, 1080, 150, 22
+    top = 350
+    LH = top + len(LOOP) * (ch + gap) + 110
+    parts = [f'<rect width="{LW}" height="{LH}" fill="{PAPER}"/>',
+             f'<g transform="translate({x0} 50) scale(0.62)">{lockup(INK, YELLOW, "pl")}</g>',
+             text(x0, 190, "ПУТЬ КЛИЕНТА", 56, INK),
+             text(x0, 234, "от первого сообщения до заказа в работе", 28, STEEL, weight=400),
+             f'<rect x="{x0}" y="262" width="{cw}" height="64" rx="18" fill="none" stroke="{YELLOW}" stroke-width="4"/>',
+             text(x0 + 24, 303, "Купил сразу через Авито Доставку, без переписки → просим VIN → сразу к шагу 3",
+                  fit_size("Купил сразу через Авито Доставку, без переписки → просим VIN → сразу к шагу 3", cw - 48, 25, 400),
+                  INK, weight=400)]
+    bx = x0 + 64
+    parts.append(f'<line x1="{bx}" y1="{top + ch / 2}" x2="{bx}" y2="{top + (len(LOOP) - 1) * (ch + gap) + ch / 2}" '
+                 f'stroke="{STEEL_LIGHT}" stroke-width="6"/>')
+    for i, (title, sla, action, branch) in enumerate(LOOP):
+        y = top + i * (ch + gap)
+        last = i == len(LOOP) - 1
+        bg, fg, sub = (INK, PAPER, STEEL_LIGHT) if last else (WHITE, INK, STEEL)
+        parts.append(f'<rect x="{x0}" y="{y}" width="{cw}" height="{ch}" rx="24" fill="{bg}"/>')
+        parts.append(f'<circle cx="{bx}" cy="{y + ch / 2}" r="34" fill="{YELLOW}"/>'
+                     + text(bx, y + ch / 2 + 12, str(i + 1), 34, INK, anchor="middle"))
+        pw = text_width(sla, 22) + 36
+        parts.append(f'<rect x="{x0 + cw - pw - 24}" y="{y + 22}" width="{pw}" height="42" rx="21" '
+                     f'fill="{YELLOW if last else INK}"/>'
+                     + text(x0 + cw - pw / 2 - 24, y + 50, sla, 22, INK if last else YELLOW, anchor="middle"))
+        tx = x0 + 130
+        parts.append(text(tx, y + 56, title, 34, fg))
+        parts.append(text(tx, y + 96, action, fit_size(action, cw - 160, 25, 400), fg, weight=400))
+        parts.append(text(tx, y + 130, branch, fit_size(branch, cw - 160, 22, 400), sub, weight=400))
+    parts.append(text(LW / 2, LH - 50, "Статусы 1–7 — те же, что на листе «Заявки» в таблице закупки",
+                      24, STEEL, weight=400, anchor="middle"))
+    return svg(LW, LH, "".join(parts), "ZAPKIT — путь клиента до заказа в работе")
+
+
 def build():
     kits = json.loads((ROOT / "avito" / "kits.json").read_text(encoding="utf-8"))["kits"]
     OUT.mkdir(parents=True, exist_ok=True)
@@ -379,6 +429,7 @@ def build():
     files["common-4-how-to-order.svg"] = svg(W, H, slide_how(), "Как заказать в ZAPKIT")
     files["print-stickers-a4.svg"] = sticker_sheet()
     files["mockup-avito-store.svg"] = store_mockup(kits)
+    files["process-client-loop.svg"] = process_loop()
     for name, content in files.items():
         (OUT / name).write_text(content, encoding="utf-8")
         print("written", OUT / name)

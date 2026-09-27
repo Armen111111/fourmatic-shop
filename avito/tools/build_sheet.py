@@ -14,7 +14,7 @@ from pathlib import Path
 
 from openpyxl import Workbook
 from openpyxl.comments import Comment
-from openpyxl.formatting.rule import CellIsRule
+from openpyxl.formatting.rule import CellIsRule, FormulaRule
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
@@ -138,6 +138,76 @@ def buy_rows(kit):
     return rows + optional
 
 
+LEAD_STATUSES = ["1. Новый", "2. Ждём VIN", "3. Подбор", "4. Предложение", "5. Думает", "6. Ждём оплату",
+                 "7. В обработке", "Отказ"]
+LEAD_REASONS = ["не ответил", "дорого", "не подошло", "нет в наличии", "долго ждать", "купил в другом месте",
+                "мы отказали", "другое"]
+LEAD_ROWS = 300
+
+
+def build_leads(wb):
+    """Лист «Заявки»: одна строка — одно обращение. Статусы — как в docs/avito/client-loop.md."""
+    wl = wb.create_sheet("Заявки")
+    cols = ["№", "Дата и время", "Покупатель (имя на Авито)", "Откуда", "Кит / что спросил", "Машина", "VIN",
+            "Статус", "Первый ответ, мин", "Сумма, ₽", "Оплата", "Причина отказа", "Следующий шаг", "Когда",
+            "Комментарий"]
+    widths = [6, 13, 20, 14, 18, 18, 20, 17, 10, 11, 15, 17, 30, 9, 30]
+    header(wl, 1, cols, widths)
+    wl.row_dimensions[1].height = 44
+    example = ["ПРИМЕР", "28.09 10:15", "Андрей", "чат", "TRM-01", "Kia Rio 2019", "Z94C…", "7. В обработке", 4,
+               5290, "Авито Доставка", None, "Заказать у поставщика до отсечки", "28.09",
+               "образец заполнения — строку можно удалить"]
+    for col, v in enumerate(example, 1):
+        c = cell(wl, 2, col, v, italic=True, color="8C929B", fmt=RUB if col == 10 else None)
+        c.fill = EXAMPLE_FILL
+    first, last = 3, 2 + LEAD_ROWS
+    for r in range(first, last + 1):
+        cell(wl, r, 1, r - 2)
+        for col in range(2, 16):
+            cell(wl, r, col, None, inp=True, fmt=RUB if col == 10 else ("DD.MM" if col == 14 else None))
+    lists = [("D", ["чат", "купил сразу", "звонок"]), ("H", LEAD_STATUSES),
+             ("K", ["Авито Доставка", "перевод"]), ("L", LEAD_REASONS)]
+    for col, values in lists:
+        dv = DataValidation(type="list", formula1='"' + ",".join(values) + '"', allow_blank=True)
+        wl.add_data_validation(dv)
+        dv.add(f"{col}{first}:{col}{last}")
+    # просроченный следующий шаг — оранжевым; долгий первый ответ — красным
+    wl.conditional_formatting.add(
+        f"M{first}:N{last}",
+        FormulaRule(formula=[f'AND($N{first}<>"",$N{first}<=TODAY(),$H{first}<>"7. В обработке",$H{first}<>"Отказ")'],
+                    fill=PatternFill("solid", fgColor="FCE4D6")))
+    wl.conditional_formatting.add(f"I{first}:I{last}", CellIsRule(operator="greaterThan", formula=["10"],
+                                                                 font=Font(name=FONT, color="C00000", bold=True)))
+    wl.freeze_panes = "D3"
+
+    # воронка справа
+    wl.column_dimensions["Q"].width = 34
+    wl.column_dimensions["R"].width = 12
+    cell(wl, 1, 17, "Воронка (по всем строкам)", bold=True)
+    rng = lambda c: f"{c}{first}:{c}{last}"
+    cell(wl, 2, 17, "Всего обращений")
+    cell(wl, 2, 18, f'=COUNTA({rng("H")})', bold=True)
+    for i, st in enumerate(LEAD_STATUSES, 3):
+        cell(wl, i, 17, st)
+        cell(wl, i, 18, f'=COUNTIF({rng("H")},"{st}")')
+    r = 3 + len(LEAD_STATUSES)
+    cell(wl, r, 17, "Доля заказов (в обработке ÷ всего)", bold=True)
+    cell(wl, r, 18, f'=IF(R2=0,"",COUNTIF({rng("H")},"7. В обработке")/R2)', fmt="0%", bold=True)
+    cell(wl, r + 1, 17, "Среднее время первого ответа, мин")
+    cell(wl, r + 1, 18, f'=IFERROR(AVERAGE({rng("I")}),"")', fmt="0")
+    cell(wl, r + 2, 17, "Выручка по заказам в обработке, ₽")
+    cell(wl, r + 2, 18, f'=SUMIF({rng("H")},"7. В обработке",{rng("J")})', fmt=RUB)
+    cell(wl, r + 4, 17, "Причины отказов", bold=True)
+    top = r + 5
+    for i, reason in enumerate(LEAD_REASONS, top):
+        cell(wl, i, 17, reason)
+        cell(wl, i, 18, f'=COUNTIF({rng("L")},"{reason}")')
+    bottom = top + len(LEAD_REASONS) - 1
+    cell(wl, bottom + 1, 17, "Чаще всего", bold=True)
+    cell(wl, bottom + 1, 18, f'=IF(SUM(R{top}:R{bottom})=0,"",INDEX(Q{top}:Q{bottom},MATCH(MAX(R{top}:R{bottom}),R{top}:R{bottom},0)))',
+         bold=True)
+
+
 def build():
     if OUT.exists() and "--force" not in sys.argv:
         sys.exit(f"{OUT} уже есть — в нём могут быть ваши цены. Чтобы создать заново, запустите с --force.")
@@ -165,6 +235,8 @@ def build():
         ("4. «Параметры» — наценка, повышение цен (+5%), комиссии, резерв на товар, постоянные расходы и план заказов. Поменяете там — пересчитается всё.", False),
         ("5. «Прогноз» — выручка и прибыль за месяц: ТО, ГРМ и тормоз-киты отдельно и вместе, точка безубыточности.", False),
         ("6. «Моторы» — справка: где цепь, где ремень, что входит в ГРМ-кит, источники.", False),
+        ("7. «Заявки» — каждое обращение на Авито: VIN, статус, следующий шаг. Справа считается воронка. "
+         "Как вести — docs/avito/client-loop.md.", False),
         ("", False),
         ("Обозначения:", True),
         ("Жёлтая заливка и синий текст — ячейки, которые заполняете вы.", False),
@@ -174,8 +246,9 @@ def build():
     for i, (t, b) in enumerate(lines, 1):
         c = ws.cell(row=i, column=1, value=t)
         c.font = f(bold=b, size=14 if i == 1 else 10)
-    ws.cell(row=12, column=1).fill = INPUT_FILL
-    ws.cell(row=12, column=1).font = f(color="0000FF")
+    legend = next(i for i, (t, _) in enumerate(lines, 1) if t.startswith("Жёлтая заливка"))
+    ws.cell(row=legend, column=1).fill = INPUT_FILL
+    ws.cell(row=legend, column=1).font = f(color="0000FF")
 
     # --- Параметры -------------------------------------------------------
     wp = wb.create_sheet("Параметры")
@@ -205,7 +278,8 @@ def build():
         ("f_ip", "Взносы ИП, ₽ в месяц", 4783, RUB, "57 390 ₽ за 2026 год ÷ 12 (фиксированные взносы ИП)."),
         ("f_kassa", "Онлайн-касса, ₽ в месяц", 1500, RUB,
          "При оплате переводом покупателю по закону нужен чек (54-ФЗ). Оценка облачной кассы — уточните у своего банка."),
-        ("f_pro", "Подписка Авито Pro, ₽ в месяц", 0, RUB, "0, пока не подключена. Впишите ≈3 000, когда подключите (обложка, автозагрузка)."),
+        ("f_pro", "Подписка Авито (тариф магазина), ₽ в месяц", 6000, RUB,
+         "Ваше решение: тариф за 6 000 ₽ в месяц. Если в тариф входит бюджет на продвижение, уменьшите «Показы» выше."),
         ("f_bank", "Обслуживание счёта, ₽ в месяц", 0, RUB, "0 на бесплатном тарифе."),
         ("f_other", "Прочее (связь, печать, расходники), ₽ в месяц", 500, RUB, "Оценка."),
         ("orders", "План заказов в месяц", 20, "0", "На сколько заказов делятся постоянные расходы. Больше заказов — меньше расходов на один кит."),
@@ -370,8 +444,8 @@ def build():
     last = first + len(scenarios) - 1
     wf.conditional_formatting.add(f"M{first}:M{last}", CellIsRule(operator="lessThan", formula=["0"],
                                                                  font=Font(name=FONT, color="C00000", bold=True)))
-    cell(wf, last + 2, 1, "Налог не учтён. Число китов в колонках B–D можно менять. При росте продаж впишите в «Параметры» "
-                          "подписку Авито Pro, если подключите.", italic=True, color="8C929B")
+    cell(wf, last + 2, 1, "Налог не учтён. Число китов в колонках B–D можно менять. Подписка Авито уже входит "
+                          "в постоянные расходы.", italic=True, color="8C929B")
 
     # --- Состав ----------------------------------------------------------
     wc = wb.create_sheet("Состав")
@@ -471,10 +545,12 @@ def build():
             cell(wm, i, col, v, wrap=True)
     wm.freeze_panes = "B2"
 
+    build_leads(wb)
     for sheet in wb.worksheets:
         sheet.sheet_view.zoomScale = 110
-    wb.move_sheet("Киты", offset=-1)      # Инструкция, Киты, Параметры, …
-    wb.move_sheet("Прогноз", offset=-(wb.sheetnames.index("Прогноз") - 2))  # … Киты, Прогноз, Параметры
+    order = ["Инструкция", "Киты", "Заявки", "Прогноз", "Параметры", "Состав", "Поставщики", "Моторы"]
+    for i, name in enumerate(order):
+        wb.move_sheet(name, offset=i - wb.sheetnames.index(name))
     wb.save(OUT)
     print("written", OUT, "rows:", r - 1)
 
