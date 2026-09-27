@@ -77,7 +77,7 @@ def rub(v):
 def buy_rows(kit):
     """Закупочные позиции кита: (позиция, кол-во, комментарий, бренд, артикул).
 
-    ТО-кит раскладывается ровно по своему составу из kits.json — ничего не добавляем.
+    ТО-кит и собранные ГРМ- и тормоз-киты раскладываются ровно по своему составу из kits.json — ничего не добавляем.
     """
     chinese = kit["car"].startswith(CHINESE)
     if kit["kind"] == "to":
@@ -97,11 +97,20 @@ def buy_rows(kit):
         return rows
     optional = [("Помпа водяная (если потребуется)", 0, "Поставьте 1, если помпу меняют вместе с ГРМ", None, None),
                 ("Масляный насос (если потребуется)", 0, "Поставьте 1, если требуется по каталогу / по состоянию", None, None)]
-    assembled = [it for it in kit["items"] if it.get("buy_price") is not None]
-    if assembled:  # кит собран — строки ровно по его составу
-        return [(it.get("listing_name") or it["name"], 1,
-                 f"Ваша закупка: {rub(it['buy_price'])} ₽ — впишите в колонку поставщика, у которого брали",
-                 it.get("brand"), it.get("article")) for it in assembled] + optional
+    if kit["kind"] != "grm":
+        optional = []
+    listed = [it for it in kit["items"] if it["icon"] != "card" and not it.get("in_kit")]
+    if any(it.get("buy_price") is not None for it in listed):  # кит собран — строки ровно по его составу
+        rows = []
+        for it in listed:
+            if it.get("buy_price") is not None:
+                notes = [f"Ваша закупка: {rub(it['buy_price'])} ₽ — впишите в колонку поставщика, у которого брали"]
+            else:
+                notes = ["Цены пока нет — впишите в колонку поставщика, у которого берёте"]
+            if it.get("note"):
+                notes.append(it["note"])
+            rows.append((it.get("listing_name") or it["name"], 1, ". ".join(notes), it.get("brand"), it.get("article")))
+        return rows + optional
     if kit["drive"] == "цепь":
         return [("Комплект цепи ГРМ (цепь, натяжитель, успокоители)", 1,
                  "Если готового комплекта нет — добавьте строки и купите позиции отдельно", None, None),
@@ -204,7 +213,7 @@ def build():
     wk.row_dimensions[1].height = 44
     for i, k in enumerate(kits, 2):
         cell(wk, i, 1, k["sku"], bold=True)
-        cell(wk, i, 2, "ТО" if k["kind"] == "to" else "ГРМ")
+        cell(wk, i, 2, {"to": "ТО", "grm": "ГРМ", "brake": "Тормоза"}[k["kind"]])
         cell(wk, i, 3, k["car"])
         cell(wk, i, 4, k["engine"])
         cell(wk, i, 5, k["drive"])
