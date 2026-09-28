@@ -149,7 +149,7 @@ def build_leads(wb):
     """Лист «Заявки»: одна строка — одно обращение. Статусы — как в docs/avito/client-loop.md."""
     wl = wb.create_sheet("Заявки")
     cols = ["№", "Дата и время", "Покупатель (имя на Авито)", "Откуда", "Кит / что спросил", "Машина", "VIN",
-            "Статус", "Первый ответ, мин", "Сумма, ₽", "Оплата", "Причина отказа", "Следующий шаг", "Когда",
+            "Статус", "Первый ответ, мин", "Сумма, ₽", "Оплата и получение", "Причина отказа", "Следующий шаг", "Когда",
             "Комментарий"]
     widths = [6, 13, 20, 14, 18, 18, 20, 17, 10, 11, 15, 17, 30, 9, 30]
     header(wl, 1, cols, widths)
@@ -166,7 +166,7 @@ def build_leads(wb):
         for col in range(2, 16):
             cell(wl, r, col, None, inp=True, fmt=RUB if col == 10 else ("DD.MM" if col == 14 else None))
     lists = [("D", ["чат", "купил сразу", "звонок"]), ("H", LEAD_STATUSES),
-             ("K", ["Авито Доставка", "перевод"]), ("L", LEAD_REASONS)]
+             ("K", ["Авито Доставка", "перевод + СДЭК", "перевод + самовывоз"]), ("L", LEAD_REASONS)]
     for col, values in lists:
         dv = DataValidation(type="list", formula1='"' + ",".join(values) + '"', allow_blank=True)
         wl.add_data_validation(dv)
