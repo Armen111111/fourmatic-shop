@@ -7,6 +7,7 @@
 Затем пересчитать формулы (LibreOffice), см. brand/README.md.
 """
 
+import datetime
 import json
 import math
 import sys
@@ -138,73 +139,100 @@ def buy_rows(kit):
     return rows + optional
 
 
-LEAD_STATUSES = ["1. Новый", "2. Ждём VIN", "3. Подбор", "4. Предложение", "5. Думает", "6. Ждём оплату",
-                 "7. В обработке", "Отказ"]
+ORDER_STATUSES = ["7. В обработке", "8. Детали у нас", "9. Собран", "10. Отправлен", "11. Получен", "12. Закрыт",
+                  "Проблема"]
+LEAD_STATUSES = ["1. Новый", "2. Ждём VIN", "3. Подбор", "4. Предложение", "5. Думает", "6. Ждём оплату"] \
+    + ORDER_STATUSES + ["Отказ"]
 LEAD_REASONS = ["не ответил", "дорого", "не подошло", "нет в наличии", "долго ждать", "купил в другом месте",
                 "мы отказали", "другое"]
 LEAD_ROWS = 300
 
 
-def build_leads(wb):
-    """Лист «Заявки»: одна строка — одно обращение. Статусы — как в docs/avito/client-loop.md."""
+def build_leads(wb, P):
+    """Лист «Заявки»: одна строка — одно обращение, от первого сообщения до отзыва.
+    Статусы 1–7 — docs/avito/client-loop.md, 7–12 и «Проблема» — docs/avito/order-loop.md."""
     wl = wb.create_sheet("Заявки")
     cols = ["№", "Дата и время", "Покупатель (имя на Авито)", "Откуда", "Кит / что спросил", "Машина", "VIN",
             "Статус", "Первый ответ, мин", "Сумма, ₽", "Оплата и получение", "Причина отказа", "Следующий шаг", "Когда",
-            "Комментарий"]
-    widths = [6, 13, 20, 14, 18, 18, 20, 17, 10, 11, 15, 17, 30, 9, 30]
+            "Трек-номер / встреча", "Получен (дата)", "Пробег в месяц, км", "Напомнить о ТО", "Комментарий"]
+    widths = [6, 13, 20, 13, 16, 18, 20, 17, 10, 11, 18, 16, 30, 9, 18, 11, 10, 11, 30]
     header(wl, 1, cols, widths)
     wl.row_dimensions[1].height = 44
-    example = ["ПРИМЕР", "28.09 10:15", "Андрей", "чат", "TRM-01", "Kia Rio 2019", "Z94C…", "7. В обработке", 4,
-               5290, "Авито Доставка", None, "Заказать у поставщика до отсечки", "28.09",
-               "образец заполнения — строку можно удалить"]
+    fmts = {10: RUB, 14: "DD.MM", 16: "DD.MM.YY", 18: "DD.MM.YY"}
+
+    def remind(r):  # дата получения + интервал ТО по пробегу клиента, минус 2 недели
+        return (f'=IF(P{r}="","",P{r}+IF(N(Q{r})>0,MIN(ROUND({P["to_interval"]}/Q{r}*30,0),365),180)-14)')
+
+    example = ["ПРИМЕР", "28.09 10:15", "Андрей", "чат", "TO-04", "Kia Rio 2019", "Z94C…", "12. Закрыт", 4,
+               4990, "Авито Доставка", None, "Напомнить о ТО", None, "СДЭК 10…", datetime.date(2026, 10, 1), 2500,
+               remind(2), "образец заполнения — строку можно удалить"]
     for col, v in enumerate(example, 1):
-        c = cell(wl, 2, col, v, italic=True, color="8C929B", fmt=RUB if col == 10 else None)
+        c = cell(wl, 2, col, v, italic=True, color="8C929B", fmt=fmts.get(col))
         c.fill = EXAMPLE_FILL
     first, last = 3, 2 + LEAD_ROWS
     for r in range(first, last + 1):
         cell(wl, r, 1, r - 2)
-        for col in range(2, 16):
-            cell(wl, r, col, None, inp=True, fmt=RUB if col == 10 else ("DD.MM" if col == 14 else None))
-    lists = [("D", ["чат", "купил сразу", "звонок"]), ("H", LEAD_STATUSES),
+        for col in range(2, 20):
+            if col == 18:
+                cell(wl, r, col, remind(r), fmt=fmts[col])
+            else:
+                cell(wl, r, col, None, inp=True, fmt=fmts.get(col))
+    lists = [("D", ["чат", "купил сразу", "звонок", "повторный"]), ("H", LEAD_STATUSES),
              ("K", ["Авито Доставка", "перевод + СДЭК", "перевод + самовывоз"]), ("L", LEAD_REASONS)]
     for col, values in lists:
         dv = DataValidation(type="list", formula1='"' + ",".join(values) + '"', allow_blank=True)
         wl.add_data_validation(dv)
         dv.add(f"{col}{first}:{col}{last}")
-    # просроченный следующий шаг — оранжевым; долгий первый ответ — красным
+    # просроченный шаг — оранжевым, «Проблема» — красным, долгий ответ — красным шрифтом, пора напомнить о ТО — жёлтым
     wl.conditional_formatting.add(
         f"M{first}:N{last}",
-        FormulaRule(formula=[f'AND($N{first}<>"",$N{first}<=TODAY(),$H{first}<>"7. В обработке",$H{first}<>"Отказ")'],
+        FormulaRule(formula=[f'AND($N{first}<>"",$N{first}<=TODAY(),$H{first}<>"12. Закрыт",$H{first}<>"Отказ")'],
                     fill=PatternFill("solid", fgColor="FCE4D6")))
+    wl.conditional_formatting.add(f"H{first}:H{last}", CellIsRule(operator="equal", formula=['"Проблема"'],
+                                                                 fill=PatternFill("solid", fgColor="F8CBAD")))
     wl.conditional_formatting.add(f"I{first}:I{last}", CellIsRule(operator="greaterThan", formula=["10"],
                                                                  font=Font(name=FONT, color="C00000", bold=True)))
+    wl.conditional_formatting.add(
+        f"R{first}:R{last}",
+        FormulaRule(formula=[f'AND(ISNUMBER($R{first}),$R{first}>=TODAY()-14,$R{first}<=TODAY()+7)'],
+                    fill=PatternFill("solid", fgColor="FFE699")))
     wl.freeze_panes = "D3"
 
     # воронка справа
-    wl.column_dimensions["Q"].width = 34
-    wl.column_dimensions["R"].width = 12
-    cell(wl, 1, 17, "Воронка (по всем строкам)", bold=True)
+    U, V = 21, 22
+    wl.column_dimensions["U"].width = 36
+    wl.column_dimensions["V"].width = 12
     rng = lambda c: f"{c}{first}:{c}{last}"
-    cell(wl, 2, 17, "Всего обращений")
-    cell(wl, 2, 18, f'=COUNTA({rng("H")})', bold=True)
+    cell(wl, 1, U, "Воронка (по всем строкам)", bold=True)
+    cell(wl, 2, U, "Всего обращений")
+    cell(wl, 2, V, f'=COUNTA({rng("H")})', bold=True)
     for i, st in enumerate(LEAD_STATUSES, 3):
-        cell(wl, i, 17, st)
-        cell(wl, i, 18, f'=COUNTIF({rng("H")},"{st}")')
+        cell(wl, i, U, st)
+        cell(wl, i, V, f'=COUNTIF({rng("H")},"{st}")')
     r = 3 + len(LEAD_STATUSES)
-    cell(wl, r, 17, "Доля заказов (в обработке ÷ всего)", bold=True)
-    cell(wl, r, 18, f'=IF(R2=0,"",COUNTIF({rng("H")},"7. В обработке")/R2)', fmt="0%", bold=True)
-    cell(wl, r + 1, 17, "Среднее время первого ответа, мин")
-    cell(wl, r + 1, 18, f'=IFERROR(AVERAGE({rng("I")}),"")', fmt="0")
-    cell(wl, r + 2, 17, "Выручка по заказам в обработке, ₽")
-    cell(wl, r + 2, 18, f'=SUMIF({rng("H")},"7. В обработке",{rng("J")})', fmt=RUB)
-    cell(wl, r + 4, 17, "Причины отказов", bold=True)
-    top = r + 5
+    orders = "+".join(f'COUNTIF({rng("H")},"{st}")' for st in ORDER_STATUSES)
+    revenue = "+".join(f'SUMIF({rng("H")},"{st}",{rng("J")})' for st in ORDER_STATUSES)
+    summary = [
+        ("Заказов (статусы 7–12 и «Проблема»)", f"={orders}", "0", True),
+        ("Доля заказов (заказы ÷ всего)", f'=IF(V2=0,"",V{r}/V2)', "0%", True),
+        ("Среднее время первого ответа, мин", f'=IFERROR(AVERAGE({rng("I")}),"")', "0", False),
+        ("Выручка по заказам, ₽", f"={revenue}", RUB, False),
+        ("Повторных обращений", f'=COUNTIF({rng("D")},"повторный")', "0", False),
+        ("Пора напомнить о ТО (жёлтые строки)",
+         f'=COUNTIFS({rng("R")},">="&(TODAY()-14),{rng("R")},"<="&(TODAY()+7))', "0", True),
+    ]
+    for i, (name, formula, fmt, bold) in enumerate(summary, r):
+        cell(wl, i, U, name, bold=bold)
+        cell(wl, i, V, formula, fmt=fmt, bold=bold)
+    r += len(summary) + 1
+    cell(wl, r, U, "Причины отказов", bold=True)
+    top = r + 1
     for i, reason in enumerate(LEAD_REASONS, top):
-        cell(wl, i, 17, reason)
-        cell(wl, i, 18, f'=COUNTIF({rng("L")},"{reason}")')
+        cell(wl, i, U, reason)
+        cell(wl, i, V, f'=COUNTIF({rng("L")},"{reason}")')
     bottom = top + len(LEAD_REASONS) - 1
-    cell(wl, bottom + 1, 17, "Чаще всего", bold=True)
-    cell(wl, bottom + 1, 18, f'=IF(SUM(R{top}:R{bottom})=0,"",INDEX(Q{top}:Q{bottom},MATCH(MAX(R{top}:R{bottom}),R{top}:R{bottom},0)))',
+    cell(wl, bottom + 1, U, "Чаще всего", bold=True)
+    cell(wl, bottom + 1, V, f'=IF(SUM(V{top}:V{bottom})=0,"",INDEX(U{top}:U{bottom},MATCH(MAX(V{top}:V{bottom}),V{top}:V{bottom},0)))',
          bold=True)
 
 
@@ -235,8 +263,8 @@ def build():
         ("4. «Параметры» — наценка, повышение цен (+5%), комиссии, резерв на товар, постоянные расходы и план заказов. Поменяете там — пересчитается всё.", False),
         ("5. «Прогноз» — выручка и прибыль за месяц: ТО, ГРМ и тормоз-киты отдельно и вместе, точка безубыточности.", False),
         ("6. «Моторы» — справка: где цепь, где ремень, что входит в ГРМ-кит, источники.", False),
-        ("7. «Заявки» — каждое обращение на Авито: VIN, статус, следующий шаг. Справа считается воронка. "
-         "Как вести — docs/avito/client-loop.md.", False),
+        ("7. «Заявки» — каждое обращение на Авито от первого сообщения до отзыва: VIN, статус, следующий шаг, трек, "
+         "напоминание о ТО. Справа считается воронка. Как вести — docs/avito/client-loop.md и docs/avito/order-loop.md.", False),
         ("", False),
         ("Обозначения:", True),
         ("Жёлтая заливка и синий текст — ячейки, которые заполняете вы.", False),
@@ -283,6 +311,9 @@ def build():
         ("f_bank", "Обслуживание счёта, ₽ в месяц", 0, RUB, "0 на бесплатном тарифе."),
         ("f_other", "Прочее (связь, печать, расходники), ₽ в месяц", 500, RUB, "Оценка."),
         ("orders", "План заказов в месяц", 20, "0", "На сколько заказов делятся постоянные расходы. Больше заказов — меньше расходов на один кит."),
+        ("to_interval", "Интервал ТО для напоминания, км", 10000, "0",
+         "Лист «Заявки»: напомнить о ТО = дата получения + (этот пробег ÷ пробег клиента в месяц), минус 2 недели. "
+         "Не позже чем через год; если пробег клиента неизвестен — через 6 месяцев."),
     ]
     P = {}
     for i, (key, name, val, fmt, note) in enumerate(params, 2):
@@ -545,7 +576,7 @@ def build():
             cell(wm, i, col, v, wrap=True)
     wm.freeze_panes = "B2"
 
-    build_leads(wb)
+    build_leads(wb, P)
     for sheet in wb.worksheets:
         sheet.sheet_view.zoomScale = 110
     order = ["Инструкция", "Киты", "Заявки", "Прогноз", "Параметры", "Состав", "Поставщики", "Моторы"]

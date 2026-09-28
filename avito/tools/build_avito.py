@@ -380,38 +380,74 @@ LOOP = [  # (этап, срок, что делаем, если что-то по�
 
 LOOP_ENTRY = "Купил сразу, без переписки → всё равно просим VIN и перепроверяем → шаг 3"
 
+# --- Схема: путь заказа от «В обработке» до отзыва и следующего ТО ------------
+ORDER_LOOP = [  # как в docs/avito/order-loop.md
+    ("Детали у нас", "в день поставки", "Забираем у поставщика, сверяем артикулы, количество и целость",
+     "Не то или брак → меняем у поставщика сразу, клиенту — честно о сроке"),
+    ("Собран", "в тот же день", "Тяжёлое вниз, канистру в пакет, карта ремонта с VIN сверху",
+     "Фото открытой коробки — клиенту в чат до отправки"),
+    ("Отправлен", "до 20:00", "Сдаём в СДЭК, трек-номер клиенту в течение часа",
+     "Самовывоз: встреча в Сочи с 9:00 до 20:00"),
+    ("Получен", "следим за треком", "Пишем, когда посылка в пункте, напоминаем про срок хранения",
+     "Спрашиваем пробег в месяц — для напоминания о ТО"),
+    ("Закрыт", "на следующий день", "Спасибо и одна просьба об отзыве", "Отвечаем на каждый отзыв, даже плохой"),
+]
+ORDER_ENTRY = "Начало — шаг 7: оплачено, детали заказаны у поставщика до отсечки"
+ORDER_AFTER = [
+    ("Проблема: не хватило, не подошло, брак → довезём, заменим или вернём деньги", STEEL),
+    ("За 2 недели до следующего ТО → напоминаем → снова шаг 1, уже как постоянный клиент", YELLOW),
+]
 
-def process_loop():
-    LW, x0, cw, ch, gap = 1200, 60, 1080, 150, 22
+
+def process_diagram(uid, title, subtitle, entry, stages, first_no, footer, after=()):
+    """Вертикальная схема этапов: карточки с номером, сроком, действием и «если что-то пошло не так»."""
+    LW, x0, cw, ch, gap, band = 1200, 60, 1080, 150, 22, 64
     top = 350
-    LH = top + len(LOOP) * (ch + gap) + 110
+    stages_h = len(stages) * (ch + gap)
+    LH = top + stages_h + len(after) * (band + 18) + 110
     parts = [f'<rect width="{LW}" height="{LH}" fill="{PAPER}"/>',
-             f'<g transform="translate({x0} 50) scale(0.62)">{lockup(INK, YELLOW, "pl")}</g>',
-             text(x0, 190, "ПУТЬ КЛИЕНТА", 56, INK),
-             text(x0, 234, "от первого сообщения до заказа в работе", 28, STEEL, weight=400),
-             f'<rect x="{x0}" y="262" width="{cw}" height="64" rx="18" fill="none" stroke="{YELLOW}" stroke-width="4"/>',
-             text(x0 + 24, 303, LOOP_ENTRY, fit_size(LOOP_ENTRY, cw - 48, 25, 400), INK, weight=400)]
+             f'<g transform="translate({x0} 50) scale(0.62)">{lockup(INK, YELLOW, uid)}</g>',
+             text(x0, 190, title, 56, INK),
+             text(x0, 234, subtitle, 28, STEEL, weight=400),
+             f'<rect x="{x0}" y="262" width="{cw}" height="{band}" rx="18" fill="none" stroke="{YELLOW}" stroke-width="4"/>',
+             text(x0 + 24, 303, entry, fit_size(entry, cw - 48, 25, 400), INK, weight=400)]
     bx = x0 + 64
-    parts.append(f'<line x1="{bx}" y1="{top + ch / 2}" x2="{bx}" y2="{top + (len(LOOP) - 1) * (ch + gap) + ch / 2}" '
+    parts.append(f'<line x1="{bx}" y1="{top + ch / 2}" x2="{bx}" y2="{top + (len(stages) - 1) * (ch + gap) + ch / 2}" '
                  f'stroke="{STEEL_LIGHT}" stroke-width="6"/>')
-    for i, (title, sla, action, branch) in enumerate(LOOP):
+    for i, (name, sla, action, branch) in enumerate(stages):
         y = top + i * (ch + gap)
-        last = i == len(LOOP) - 1
+        last = i == len(stages) - 1
         bg, fg, sub = (INK, PAPER, STEEL_LIGHT) if last else (WHITE, INK, STEEL)
         parts.append(f'<rect x="{x0}" y="{y}" width="{cw}" height="{ch}" rx="24" fill="{bg}"/>')
         parts.append(f'<circle cx="{bx}" cy="{y + ch / 2}" r="34" fill="{YELLOW}"/>'
-                     + text(bx, y + ch / 2 + 12, str(i + 1), 34, INK, anchor="middle"))
+                     + text(bx, y + ch / 2 + 12, str(first_no + i), 34 if first_no + i < 10 else 30, INK,
+                            anchor="middle"))
         pw = text_width(sla, 22) + 36
         parts.append(f'<rect x="{x0 + cw - pw - 24}" y="{y + 22}" width="{pw}" height="42" rx="21" '
                      f'fill="{YELLOW if last else INK}"/>'
                      + text(x0 + cw - pw / 2 - 24, y + 50, sla, 22, INK if last else YELLOW, anchor="middle"))
         tx = x0 + 130
-        parts.append(text(tx, y + 56, title, 34, fg))
+        parts.append(text(tx, y + 56, name, 34, fg))
         parts.append(text(tx, y + 96, action, fit_size(action, cw - 160, 25, 400), fg, weight=400))
         parts.append(text(tx, y + 130, branch, fit_size(branch, cw - 160, 22, 400), sub, weight=400))
-    parts.append(text(LW / 2, LH - 50, "Статусы 1–7 — те же, что на листе «Заявки» в таблице закупки",
-                      24, STEEL, weight=400, anchor="middle"))
-    return svg(LW, LH, "".join(parts), "ZAPKIT — путь клиента до заказа в работе")
+    y = top + stages_h
+    for label, color in after:
+        parts.append(f'<rect x="{x0}" y="{y}" width="{cw}" height="{band}" rx="18" fill="none" '
+                     f'stroke="{color}" stroke-width="4"/>'
+                     + text(x0 + 24, y + 41, label, fit_size(label, cw - 48, 25, 400), INK, weight=400))
+        y += band + 18
+    parts.append(text(LW / 2, LH - 50, footer, 24, STEEL, weight=400, anchor="middle"))
+    return svg(LW, LH, "".join(parts), f"ZAPKIT — {title.lower()}")
+
+
+def process_loop():
+    return process_diagram("pl", "ПУТЬ КЛИЕНТА", "от первого сообщения до заказа в работе", LOOP_ENTRY, LOOP, 1,
+                           "Статусы 1–7 — те же, что на листе «Заявки» в таблице закупки")
+
+
+def order_loop():
+    return process_diagram("ol", "ПУТЬ ЗАКАЗА", "от «В обработке» до отзыва и следующего ТО", ORDER_ENTRY,
+                           ORDER_LOOP, 8, "Статусы 8–12 и «Проблема» — те же, что на листе «Заявки»", ORDER_AFTER)
 
 
 def build():
@@ -433,6 +469,7 @@ def build():
     files["print-stickers-a4.svg"] = sticker_sheet()
     files["mockup-avito-store.svg"] = store_mockup(kits)
     files["process-client-loop.svg"] = process_loop()
+    files["process-order-loop.svg"] = order_loop()
     for name, content in files.items():
         (OUT / name).write_text(content, encoding="utf-8")
         print("written", OUT / name)
